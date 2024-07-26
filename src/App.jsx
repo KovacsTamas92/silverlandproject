@@ -6,6 +6,7 @@ import Elorendeles from "./pages/Elorendeles";
 import Rolunk from "./pages/Rolunk";
 import Kapcsolat from "./pages/Kapcsolat";
 import AdminMainPage from "./admin/pages/AdminMainPages";
+import AdminUpload from "./admin/pages/AdminUpload";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/kapcsolat" element={<Kapcsolat />} />
           <Route path="/description" element={<Description />} />
           <Route path= "/adminmain" element={<AdminMainPage/>}/>
+          <Route path="/adminupload" element={<AdminUpload />} />
         </Routes>
       </div>
     </Router>

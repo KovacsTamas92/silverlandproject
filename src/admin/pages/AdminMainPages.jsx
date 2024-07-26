@@ -4,7 +4,7 @@ const AdminMainPage = () => {
     return (
         <div>
             <AdminNavbar />
-            <div className="admin">
+            <div className="mt-20">
                 <p>Hello Admin!</p>
             </div>
         </div>

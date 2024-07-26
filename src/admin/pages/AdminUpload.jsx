@@ -76,7 +76,7 @@ const AdminUpload = () => {
     return (
         <div>
             <AdminNavbar />
-            <div className="max-w-lg mx-auto p-4 mt-8 bg-white shadow-md rounded-md">
+            <div className="max-w-lg mx-auto p-4 mt-20 bg-white shadow-md rounded-md">
                 {!selectedMainCategory ? (
                     <div>
                         <h2 className="text-2xl font-bold mb-6 text-center">Válassz Kategóriát</h2>

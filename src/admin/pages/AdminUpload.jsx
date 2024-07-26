@@ -63,7 +63,6 @@ const AdminUpload = () => {
 
     const handleMainCategoryChange = (e) => {
         setSelectedMainCategory(e.target.value);
-        setSelectedSubCategory('');
     };
 
     const handleSubCategoryChange = (e) => {
@@ -72,7 +71,6 @@ const AdminUpload = () => {
 
     const handleBack = () => {
         setSelectedMainCategory('');
-        setSelectedSubCategory('');
     };
 
     return (
@@ -88,8 +86,8 @@ const AdminUpload = () => {
                             onChange={handleMainCategoryChange}
                         >
                             <option value="" disabled>Válassz egy fő kategóriát</option>
-                            {mainCategories.map((category, index) => (
-                                <option key={index} value={category}>{category}</option>
+                            {mainCategories.map((mainCategory) => (
+                                <option value={mainCategory}>{mainCategory}</option>
                             ))}
                         </select>
                     </div>
@@ -140,8 +138,8 @@ const AdminUpload = () => {
                                     onChange={handleSubCategoryChange}
                                 >
                                     <option value="" disabled>Válassz egy alkategóriát</option>
-                                    {subCategories[selectedMainCategory].map((category, index) => (
-                                        <option key={index} value={category}>{category}</option>
+                                    {subCategories[selectedMainCategory].map((category) => (
+                                        <option value={category}>{category}</option>
                                     ))}
                                 </select>
                             </div>

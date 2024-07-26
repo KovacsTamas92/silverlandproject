@@ -60,17 +60,80 @@ const AdminUpload = () => {
 
     const [selectedMainCategory, setSelectedMainCategory] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
+    const [file, setFile] = useState(null);
+    const [name, setName] = useState('');
+    const [price, setPrice] = useState('');
+    const [description, setDescription] = useState('');
 
     const handleMainCategoryChange = (e) => {
         setSelectedMainCategory(e.target.value);
+        setSelectedSubCategory('');
     };
 
     const handleSubCategoryChange = (e) => {
         setSelectedSubCategory(e.target.value);
     };
 
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!selectedMainCategory || !selectedSubCategory || !name || !price || !description || !file) {
+            alert('Minden mezőt ki kell tölteni!');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64File = reader.result.split(',')[1];
+    
+            const data = {
+                file: `data:${file.type};base64,${base64File}`,
+                name,
+                price,
+                description,
+                maincategory: selectedMainCategory,
+                subcategory: selectedSubCategory
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Adatok sikeresen feltöltve!');
+                    setSelectedMainCategory('');
+                    setSelectedSubCategory('');
+                    setName('');
+                    setPrice('');
+                    setDescription('');
+                    setFile(null);
+                } else {
+                    throw new Error('Hiba történt az adatok feltöltésekor!');
+                }
+            } catch (error) {
+                console.error('Hiba a feltöltés során:', error);
+                alert('Hiba történt az adatok feltöltésekor!');
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
     const handleBack = () => {
         setSelectedMainCategory('');
+        setSelectedSubCategory('');
+        setName('');
+        setPrice('');
+        setDescription('');
+        setFile(null);
     };
 
     return (
@@ -87,14 +150,14 @@ const AdminUpload = () => {
                         >
                             <option value="" disabled>Válassz egy fő kategóriát</option>
                             {mainCategories.map((mainCategory) => (
-                                <option value={mainCategory}>{mainCategory}</option>
+                                <option key={mainCategory} value={mainCategory}>{mainCategory}</option>
                             ))}
                         </select>
                     </div>
                 ) : (
                     <div>
                         <h2 className="text-2xl font-bold mb-6 text-center">{selectedMainCategory}</h2>
-                        <form>
+                        <form onSubmit={handleSubmit}>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
                                     Név
@@ -104,6 +167,8 @@ const AdminUpload = () => {
                                     id="name"
                                     type="text"
                                     placeholder="Termék neve"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-4">
@@ -113,8 +178,10 @@ const AdminUpload = () => {
                                 <input
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="price"
-                                    type="text"
+                                    type="number"
                                     placeholder="Termék ára"
+                                    value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
                                 />
                             </div>
                             <div className="mb-4">
@@ -125,6 +192,8 @@ const AdminUpload = () => {
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="description"
                                     placeholder="Termék leírása"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
                                 />
                             </div>
                             <div className="mb-4">
@@ -138,8 +207,8 @@ const AdminUpload = () => {
                                     onChange={handleSubCategoryChange}
                                 >
                                     <option value="" disabled>Válassz egy alkategóriát</option>
-                                    {subCategories[selectedMainCategory].map((category) => (
-                                        <option value={category}>{category}</option>
+                                    {subCategories[selectedMainCategory]?.map((category) => (
+                                        <option key={category} value={category}>{category}</option>
                                     ))}
                                 </select>
                             </div>
@@ -151,6 +220,7 @@ const AdminUpload = () => {
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="file"
                                     type="file"
+                                    onChange={handleFileChange}
                                 />
                             </div>
                             <div className="flex items-center justify-between">
@@ -177,3 +247,5 @@ const AdminUpload = () => {
 };
 
 export default AdminUpload;
+
+

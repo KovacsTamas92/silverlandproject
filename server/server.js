@@ -90,6 +90,20 @@ app.get('/api/data', (req, res) => {
     });
   });
 
+//Adatok törlése
+app.delete('/api/data/:id', (req, res) => {
+    const id = req.params.id;
+    DataModel.findByIdAndDelete(id)
+      .then(() => {
+        console.log('Az adat törlése sikeres volt!');
+        res.status(200).json({ message: 'Az adat törlése sikeres volt!' });
+      })
+      .catch((err) => {
+        console.log('Hiba az adat törlésekor:', err);
+        res.status(500).send('Hiba az adat törlésekor!');
+      });
+  });
+
 app.listen(port, ()  => {
     console.log(`A szerver fut a ${port}-es porton!`)
 })

@@ -22,6 +22,27 @@ const AdminMainPage = () => {
         fetchData();
     }, []);
 
+    const handleDelete = async (id) => {
+        if (window.confirm('Biztosan törölni szeretné ezt a terméket?')) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/data/${id}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) {
+                    throw new Error('Hiba történt a törlés során!');
+                }
+                setData(data.filter(item => item._id !== id));
+                alert('Termék sikeresen törölve!');
+            } catch (error) {
+                setError(error.message);
+            }
+        }
+    };
+
+    const handleEdit = (id) => {
+        alert(`Szerkesztés: ${id}`);
+    };
+
     return (
         <div>
             <AdminNavbar />
@@ -37,6 +58,20 @@ const AdminMainPage = () => {
                                 <p className="text-gray-600 mt-2"><strong>Leírás:</strong> {item.description}</p>
                                 <p className="text-gray-600 mt-2"><strong>Fő Kategória:</strong> {item.maincategory}</p>
                                 <p className="text-gray-600 mt-2"><strong>Al Kategória:</strong> {item.subcategory}</p>
+                                <div className="mt-4 flex gap-4">
+                                    <button
+                                        className="flex-1 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                        onClick={() => handleDelete(item._id)}
+                                    >
+                                        Törlés
+                                    </button>
+                                    <button
+                                        className="flex-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                        onClick={() => handleEdit(item._id)}
+                                    >
+                                        Szerkesztés
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -44,6 +79,6 @@ const AdminMainPage = () => {
             </div>
         </div>
     );
-}
+};
 
 export default AdminMainPage;

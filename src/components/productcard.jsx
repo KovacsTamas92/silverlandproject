@@ -62,7 +62,7 @@ function ProductCard() {
               Kosárba
             </button>
             <Link
-              to={`/description/${product.id}`}
+              to="/description"
               className="underline text-black hover:text-blue-600 font-bold py-2 px-4"
             >
               Részletek

@@ -61,7 +61,7 @@ const AdminUpload = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
-    
+
     const [selectedMainCategory, setSelectedMainCategory] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
     const [file, setFile] = useState(null);
@@ -117,9 +117,9 @@ const AdminUpload = () => {
     
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = async () => { 
+            reader.onloadend = () => { 
                 const base64File = reader.result.split(',')[1]; // Base64 kódolt adat
-                await saveData(base64File); // Az adat mentése közvetlenül a fájl beolvasása után
+                saveData(base64File); // Az adat mentése közvetlenül a fájl beolvasása után
             };
             reader.onerror = (error) => {
                 console.error('Hiba történt a fájl beolvasása során:', error);
@@ -133,7 +133,7 @@ const AdminUpload = () => {
     
     const saveData = async (base64File) => {
         const data = {
-            file: base64File ? `data:${file.type};base64,${base64File}` : filePreview,
+            file: `data:${file.type};base64,${base64File}`,
             name,
             price,
             description,

@@ -61,11 +61,11 @@ const AdminUpload = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
+    
     const [selectedMainCategory, setSelectedMainCategory] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
     const [file, setFile] = useState(null);
     const [filePreview, setFilePreview] = useState(''); // Fájl előnézet
-    const [fileName, setFileName] = useState(''); // Fájl neve
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
@@ -96,23 +96,15 @@ const AdminUpload = () => {
         }
     }, [location.state]);
 
-    const handleMainCategoryChange = (e) => {
-        setSelectedMainCategory(e.target.value);
-    };
-
-    const handleSubCategoryChange = (e) => {
-        setSelectedSubCategory(e.target.value);
-    };
-
+    //kép előnézete
     const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0];
+        const selectedFile = e.target.files[0]; //fájl kiválasztása az inputból
         setFile(selectedFile);
-        setFileName(selectedFile.name);
         const reader = new FileReader();
-        reader.onloadend = () => {
+        reader.onloadend = () => { //base64 betöltés
             setFilePreview(reader.result);
         };
-        reader.readAsDataURL(selectedFile);
+        reader.readAsDataURL(selectedFile);//base64 beolvasás
     };
 
     const handleSubmit = async (e) => {
@@ -123,19 +115,22 @@ const AdminUpload = () => {
             return;
         }
     
-        let fileData = null;
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = async () => {
-                fileData = reader.result.split(',')[1]; // Base64 kódolt adat
-                await saveData(fileData);
+            reader.onloadend = async () => { 
+                const base64File = reader.result.split(',')[1]; // Base64 kódolt adat
+                await saveData(base64File); // Az adat mentése közvetlenül a fájl beolvasása után
+            };
+            reader.onerror = (error) => {
+                console.error('Hiba történt a fájl beolvasása során:', error);
+                alert('Hiba történt a fájl beolvasása során. Próbálja újra.');
             };
             reader.readAsDataURL(file);
         } else {
             await saveData(); // Ha nincs fájl, akkor is hívjuk meg a saveData-t
         }
     };
-
+    
     const saveData = async (base64File) => {
         const data = {
             file: base64File ? `data:${file.type};base64,${base64File}` : filePreview,
@@ -147,7 +142,7 @@ const AdminUpload = () => {
         };
     
         try {
-            const method = itemId ? 'PUT' : 'POST'; // Ha van itemId, PUT kérést használunk
+            const method = itemId ? 'PUT' : 'POST';
             const url = itemId ? `http://localhost:3000/api/data/${itemId}` : 'http://localhost:3000/api/data';
             const response = await fetch(url, {
                 method,
@@ -166,7 +161,6 @@ const AdminUpload = () => {
         }
     };
     
-
     const handleBack = () => {
         navigate('/adminmain');
     };
@@ -184,7 +178,7 @@ const AdminUpload = () => {
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             id="maincategory"
                             value={selectedMainCategory}
-                            onChange={handleMainCategoryChange}
+                            onChange={(e) => setSelectedMainCategory(e.target.value)}
                         >
                             <option value="" disabled>Válassz egy fő kategóriát</option>
                             {mainCategories.map((category) => (
@@ -200,7 +194,7 @@ const AdminUpload = () => {
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             id="subcategory"
                             value={selectedSubCategory}
-                            onChange={handleSubCategoryChange}
+                            onChange={(e)=> setSelectedSubCategory(e.target.value)}
                         >
                             <option value="" disabled>Válassz egy alkategóriát</option>
                             {subCategories[selectedMainCategory]?.map((category) => (

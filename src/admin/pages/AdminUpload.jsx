@@ -61,7 +61,6 @@ const AdminUpload = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
-
     const [selectedMainCategory, setSelectedMainCategory] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
     const [file, setFile] = useState(null);
@@ -96,40 +95,41 @@ const AdminUpload = () => {
         }
     }, [location.state]);
 
-    //kép előnézete
+    //Aktuális kép beállítása
     const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0]; //fájl kiválasztása az inputból
+        const selectedFile = e.target.files[0];
         setFile(selectedFile);
         const reader = new FileReader();
-        reader.onloadend = () => { //base64 betöltés
+        reader.onloadend = () => {
             setFilePreview(reader.result);
         };
-        reader.readAsDataURL(selectedFile);//base64 beolvasás
+        reader.readAsDataURL(selectedFile);
     };
 
+    //handleSubmit
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        if (!selectedMainCategory || !selectedSubCategory || !name || !price || !description || !file) {
+        if (!selectedMainCategory || !selectedSubCategory || !name || !price || !description) {
             alert('Minden mezőt ki kell tölteni!');
             return;
         }
     
-        const reader = new FileReader();
-        reader.onloadend = () => { 
-            const base64File = reader.result.split(',')[1]; // Base64 kódolt adat
-            saveData(base64File); // Az adat mentése közvetlenül a fájl beolvasása után
-        };
-        reader.onerror = (error) => {
-            console.error('Hiba történt a fájl beolvasása során:', error);
-            alert('Hiba történt a fájl beolvasása során. Próbálja újra.');
-        };
-        reader.readAsDataURL(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64File = reader.result.split(',')[1]; // Base64 kódolt adat
+                await saveData(base64File);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            await saveData(); // Ha nincs fájl, akkor is hívjuk meg a saveData-t
+        }
     };
-    
+
     const saveData = async (base64File) => {
         const data = {
-            file: `data:${file.type};base64,${base64File}`,
+            file: base64File ? `data:${file.type};base64,${base64File}` : filePreview,
             name,
             price,
             description,
@@ -138,7 +138,7 @@ const AdminUpload = () => {
         };
     
         try {
-            const method = itemId ? 'PUT' : 'POST';
+            const method = itemId ? 'PUT' : 'POST'; // Ha van itemId, PUT kérést használunk
             const url = itemId ? `http://localhost:3000/api/data/${itemId}` : 'http://localhost:3000/api/data';
             const response = await fetch(url, {
                 method,
@@ -157,6 +157,7 @@ const AdminUpload = () => {
         }
     };
     
+
     const handleBack = () => {
         navigate('/adminmain');
     };
@@ -190,7 +191,7 @@ const AdminUpload = () => {
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             id="subcategory"
                             value={selectedSubCategory}
-                            onChange={(e)=> setSelectedSubCategory(e.target.value)}
+                            onChange={(e) => setSelectedSubCategory(e.target.value)}
                         >
                             <option value="" disabled>Válassz egy alkategóriát</option>
                             {subCategories[selectedMainCategory]?.map((category) => (

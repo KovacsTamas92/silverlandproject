@@ -110,25 +110,22 @@ const AdminUpload = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        if (!selectedMainCategory || !selectedSubCategory || !name || !price || !description) {
+        if (!selectedMainCategory || !selectedSubCategory || !name || !price || !description || !file) {
             alert('Minden mezőt ki kell tölteni!');
             return;
         }
     
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => { 
-                const base64File = reader.result.split(',')[1]; // Base64 kódolt adat
-                saveData(base64File); // Az adat mentése közvetlenül a fájl beolvasása után
-            };
-            reader.onerror = (error) => {
-                console.error('Hiba történt a fájl beolvasása során:', error);
-                alert('Hiba történt a fájl beolvasása során. Próbálja újra.');
-            };
-            reader.readAsDataURL(file);
-        } else {
-            await saveData(); // Ha nincs fájl, akkor is hívjuk meg a saveData-t
-        }
+        const reader = new FileReader();
+        reader.onloadend = () => { 
+            const base64File = reader.result.split(',')[1]; // Base64 kódolt adat
+            saveData(base64File); // Az adat mentése közvetlenül a fájl beolvasása után
+        };
+        reader.onerror = (error) => {
+            console.error('Hiba történt a fájl beolvasása során:', error);
+            alert('Hiba történt a fájl beolvasása során. Próbálja újra.');
+        };
+        reader.readAsDataURL(file);
+      
     };
     
     const saveData = async (base64File) => {

@@ -54,39 +54,29 @@ const dataSchema = new mongoose.Schema({
 
 const DataModel = mongoose.model('Data', dataSchema);
 
-// Adatok feltöltése és frissítése
+//Adatok feltöltése
 app.post('/api/data', (req, res) => {
-    const { _id, file, name, price, description, maincategory, subcategory } = req.body;
+  if (!req.body || !req.body.file) {
+    res.status(400).send('Nincs fájl az adatokban!');
+    return;
+  }
 
-    if (_id) {
-        // Frissítés
-        DataModel.findByIdAndUpdate(_id, { $set: { file, name, price, description, maincategory, subcategory } }, { new: true, runValidators: true })
-            .then((updatedData) => {
-                if (!updatedData) {
-                    console.log('Nem található ilyen adat az adatbázisban!');
-                    return res.status(404).send('Nem található ilyen adat az adatbázisban!');
-                }
-                console.log('Az adat sikeresen frissítve lett!');
-                res.status(200).send('Az adat sikeresen frissítve lett!');
-            })
-            .catch((err) => {
-                console.log('Hiba az adat frissítésekor:', err);
-                res.status(500).send('Hiba az adat frissítésekor!');
-            });
-    } else {
-        // Új adat létrehozása
-        const data = new DataModel({ file, name, price, description, maincategory, subcategory });
+  const data = new DataModel({
+    file: req.body.file,
+    name: req.body.name,
+    price: req.body.price,
+    description: req.body.description,
+    maincategory: req.body.maincategory,
+    subcategory: req.body.subcategory
+  });
 
-        data.save()
-            .then(() => {
-                console.log('Az adatok mentése sikeres volt!');
-                res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
-            })
-            .catch((err) => {
-                console.log('Hiba az adatok mentésekor:', err);
-                res.status(500).send('Hiba az adatok mentésekor!');
-            });
-    }
+  data.save().then(() => {
+    console.log('Az adatok mentése sikeres volt!');
+    res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
+  }).catch((err) => {
+    console.log('Hiba az adatok mentésekor:', err);
+    res.status(500).send('Hiba az adatok mentésekor!');
+  });
 });
 
 // Adatok lekérdezése
@@ -102,6 +92,22 @@ app.get('/api/data', (req, res) => {
         });
 });
 
+// Adatok lekérdezése ID alapján
+app.get('/api/data/:id', (req, res) => {
+  const id = req.params.id;
+  DataModel.findById(id)
+      .then((data) => {
+          if (!data) {
+              return res.status(404).send('A keresett adat nem található!');
+          }
+          res.send(data);
+      })
+      .catch((err) => {
+          console.log('Hiba az adat lekérdezésekor:', err);
+          res.status(500).send('Hiba az adat lekérdezésekor!');
+      });
+});
+
 // Adatok törlése
 app.delete('/api/data/:id', (req, res) => {
     const id = req.params.id;
@@ -114,6 +120,25 @@ app.delete('/api/data/:id', (req, res) => {
             console.log('Hiba az adat törlésekor:', err);
             res.status(500).send('Hiba az adat törlésekor!');
         });
+});
+
+// Adatok frissítése ID alapján
+app.put('/api/data/:id', (req, res) => {
+  const id = req.params.id;
+  const { file, name, price, description, maincategory, subcategory } = req.body;
+
+  DataModel.findByIdAndUpdate(id, { file, name, price, description, maincategory, subcategory }, { new: true, runValidators: true })
+      .then((updatedData) => {
+          if (!updatedData) {
+              return res.status(404).send('A keresett adat nem található!');
+          }
+          console.log('Az adat sikeresen frissítve lett!');
+          res.status(200).send(updatedData);
+      })
+      .catch((err) => {
+          console.log('Hiba az adat frissítésekor:', err);
+          res.status(500).send('Hiba az adat frissítésekor!');
+      });
 });
 
 app.listen(port, () => {

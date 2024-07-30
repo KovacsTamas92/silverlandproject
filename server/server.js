@@ -2,8 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose'); 
 const cors = require('cors');
 const app = express();
-const port = 3000;
-const url = 'mongodb+srv://silverland:silverland@cluster0.hukpn1b.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+require('dotenv').config();
+
+const port = process.env.PORT
+const url = process.env.MONGOOSE_URI
 
 // Middleware
 app.use(cors());

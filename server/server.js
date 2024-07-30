@@ -1,15 +1,15 @@
-const express = require('express')
+const express = require('express');
 const mongoose = require('mongoose'); 
 const cors = require('cors');
-const app  = express()
-const port = 3000
-const url = 'mongodb+srv://silverland:silverland@cluster0.hukpn1b.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+const app = express();
+const port = 3000;
+const url = 'mongodb+srv://silverland:silverland@cluster0.hukpn1b.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
-//Middleware
+// Middleware
 app.use(cors());
-app.use(express.json({limit: '500mb'}));
+app.use(express.json({ limit: '500mb' }));
 
-//MongoDB kapcsolat
+// MongoDB kapcsolat
 mongoose.connect(url) 
   .then(() => {
     console.log('A MongoDB adatbázishoz sikeresen kapcsolódva!');
@@ -18,7 +18,7 @@ mongoose.connect(url)
     console.log('Hiba a MongoDB adatbázis kapcsolat során:', error);
   });
 
-//Schema
+// Schema
 const dataSchema = new mongoose.Schema({
     file: {
       type: String,
@@ -30,80 +30,92 @@ const dataSchema = new mongoose.Schema({
         message: 'A fájl nem base64 kódolt.'
       }
     },
-    name:{
+    name: {
       type: String,
       required: true
     },
-    price:{
+    price: {
       type: String,
       required: true
     },
-    description:{
+    description: {
       type: String,
       required: true
     },
-    maincategory:{
-      type:String,
+    maincategory: {
+      type: String,
       required: true
     },
-    subcategory:{
-        type:String,
-        required: true
-      }
-  });
+    subcategory: {
+      type: String,
+      required: true
+    }
+});
 
 const DataModel = mongoose.model('Data', dataSchema);
 
-//Adatok feltöltése
+// Adatok feltöltése és frissítése
 app.post('/api/data', (req, res) => {
-    if (!req.body || !req.body.file) {
-      res.status(400).send('Nincs fájl az adatokban!');
-      return;
+    const { _id, file, name, price, description, maincategory, subcategory } = req.body;
+
+    if (_id) {
+        // Frissítés
+        DataModel.findByIdAndUpdate(_id, { $set: { file, name, price, description, maincategory, subcategory } }, { new: true, runValidators: true })
+            .then((updatedData) => {
+                if (!updatedData) {
+                    console.log('Nem található ilyen adat az adatbázisban!');
+                    return res.status(404).send('Nem található ilyen adat az adatbázisban!');
+                }
+                console.log('Az adat sikeresen frissítve lett!');
+                res.status(200).send('Az adat sikeresen frissítve lett!');
+            })
+            .catch((err) => {
+                console.log('Hiba az adat frissítésekor:', err);
+                res.status(500).send('Hiba az adat frissítésekor!');
+            });
+    } else {
+        // Új adat létrehozása
+        const data = new DataModel({ file, name, price, description, maincategory, subcategory });
+
+        data.save()
+            .then(() => {
+                console.log('Az adatok mentése sikeres volt!');
+                res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
+            })
+            .catch((err) => {
+                console.log('Hiba az adatok mentésekor:', err);
+                res.status(500).send('Hiba az adatok mentésekor!');
+            });
     }
-  
-    const data = new DataModel({
-      file: req.body.file,
-      name: req.body.name,
-      price: req.body.price,
-      description: req.body.description,
-      maincategory: req.body.maincategory,
-      subcategory: req.body.subcategory
-    });
-  
-    data.save().then(() => {
-      console.log('Az adatok mentése sikeres volt!');
-      res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
-    }).catch((err) => {
-      console.log('Hiba az adatok mentésekor:', err);
-      res.status(500).send('Hiba az adatok mentésekor!');
-    });
-  });
+});
 
-//Adatok lekérdezése 
+// Adatok lekérdezése
 app.get('/api/data', (req, res) => {
-    DataModel.find({}).then((data) => {
-      console.log('Az adatok lekérdezése sikeres volt!')
-      res.send(data);
-    }).catch((err) => {
-      console.log('Hiba az adatok lekérdezésekor:', err);
-      res.status(500).send('Hiba az adatok lekérdezésekor!');
-    });
-  });
+    DataModel.find({})
+        .then((data) => {
+            console.log('Az adatok lekérdezése sikeres volt!');
+            res.send(data);
+        })
+        .catch((err) => {
+            console.log('Hiba az adatok lekérdezésekor:', err);
+            res.status(500).send('Hiba az adatok lekérdezésekor!');
+        });
+});
 
-//Adatok törlése
+// Adatok törlése
 app.delete('/api/data/:id', (req, res) => {
     const id = req.params.id;
     DataModel.findByIdAndDelete(id)
-      .then(() => {
-        console.log('Az adat törlése sikeres volt!');
-        res.status(200).json({ message: 'Az adat törlése sikeres volt!' });
-      })
-      .catch((err) => {
-        console.log('Hiba az adat törlésekor:', err);
-        res.status(500).send('Hiba az adat törlésekor!');
-      });
-  });
+        .then(() => {
+            console.log('Az adat törlése sikeres volt!');
+            res.status(200).json({ message: 'Az adat törlése sikeres volt!' });
+        })
+        .catch((err) => {
+            console.log('Hiba az adat törlésekor:', err);
+            res.status(500).send('Hiba az adat törlésekor!');
+        });
+});
 
-app.listen(port, ()  => {
-    console.log(`A szerver fut a ${port}-es porton!`)
-})
+app.listen(port, () => {
+    console.log(`A szerver fut a ${port}-es porton!`);
+});

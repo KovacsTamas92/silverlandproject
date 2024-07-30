@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import AdminNavbar from '../components/adminNavbar';
+import EditModal from '../components/editModal';
 
 const AdminMainPage = () => {
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
+    const [editItem, setEditItem] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -39,14 +41,41 @@ const AdminMainPage = () => {
         }
     };
 
-    const handleEdit = (id) => {
-        alert(`Szerkesztés: ${id}`);
+    const handleSave = async (updatedItem) => {
+        try {
+            const response = await fetch('http://localhost:3000/api/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedItem),
+            });
+            if (!response.ok) {
+                throw new Error('Hiba történt a frissítés során!');
+            }
+            setData(data.map(item => item._id === updatedItem._id ? updatedItem : item));
+            setEditItem(null);
+            alert('Termék sikeresen frissítve!');
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const handleEdit = (item) => {
+        setEditItem(item);
     };
 
     return (
         <div>
             <AdminNavbar />
             <div className="mt-20 p-4">
+                {editItem && (
+                    <EditModal
+                        item={editItem}
+                        onSave={handleSave}
+                        onClose={() => setEditItem(null)}
+                    />
+                )}
                 <ul className="space-y-4">
                     {error && <p className="text-red-500">{error}</p>}  
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -67,7 +96,7 @@ const AdminMainPage = () => {
                                     </button>
                                     <button
                                         className="flex-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                        onClick={() => handleEdit(item._id)}
+                                        onClick={() => handleEdit(item)}
                                     >
                                         Szerkesztés
                                     </button>

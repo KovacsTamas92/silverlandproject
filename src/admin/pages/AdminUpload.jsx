@@ -98,7 +98,6 @@ const AdminUpload = () => {
 
     const handleMainCategoryChange = (e) => {
         setSelectedMainCategory(e.target.value);
-        setSelectedSubCategory('');
     };
 
     const handleSubCategoryChange = (e) => {

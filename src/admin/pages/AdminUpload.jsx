@@ -125,7 +125,6 @@ const AdminUpload = () => {
             alert('Hiba történt a fájl beolvasása során. Próbálja újra.');
         };
         reader.readAsDataURL(file);
-      
     };
     
     const saveData = async (base64File) => {

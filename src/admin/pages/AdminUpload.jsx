@@ -89,17 +89,23 @@ const AdminUpload = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (!selectedMainCategory || !selectedSubCategory || !name || !price || !description) {
             alert('Minden mezőt ki kell tölteni!');
             return;
         }
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-            fileData = reader.result.split(',')[1];
-            await saveData(fileData);
-        };
-
+    
+        let fileData = null;
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                fileData = reader.result.split(',')[1]; // Base64 kódolt adat
+                await saveData(fileData);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            await saveData(); // Ha nincs fájl, akkor is hívjuk meg a saveData-t
+        }
     };
 
     const saveData = async (base64File) => {
@@ -111,7 +117,7 @@ const AdminUpload = () => {
             maincategory: selectedMainCategory,
             subcategory: selectedSubCategory
         };
-
+    
         try {
             const method = itemId ? 'PUT' : 'POST'; // Ha van itemId, PUT kérést használunk
             const url = itemId ? `http://localhost:3000/api/data/${itemId}` : 'http://localhost:3000/api/data';
@@ -131,6 +137,7 @@ const AdminUpload = () => {
             console.error('Hiba történt az adat mentése során:', error);
         }
     };
+    
 
     const handleBack = () => {
         navigate('/adminmain');
@@ -251,4 +258,3 @@ const AdminUpload = () => {
 };
 
 export default AdminUpload;
-

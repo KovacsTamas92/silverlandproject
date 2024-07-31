@@ -198,8 +198,8 @@ app.post('/api/userlogin', (req, res) => {
   const { username, password } = req.body;
 
   UserModel.findOne({ username, password })
-    .then((admin) => {
-      if (!admin) {
+    .then((user) => {
+      if (!user) {
         return res.status(401).send('Hibás felhasználónév vagy jelszó!');
       }
       res.status(200).send('Bejelentkezés sikeres!');

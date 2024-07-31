@@ -153,12 +153,42 @@ app.post('/api/adminlogin', (req, res) => {
       if (!admin) {
         return res.status(401).send('Hibás felhasználónév vagy jelszó!');
       }
-      res.status(200).send('Bejelentkezés sikeres!');
+      res.status(200).json(admin)
     })
     .catch((err) => {
       console.log('Hiba a bejelentkezés során:', err);
       res.status(500).send('Hiba a bejelentkezés során!');
     });
+});
+
+// Admin adatok lekérdezése ID alapján
+app.get('/api/admin/:id', (req, res) => {
+  const id = req.params.id;
+  AdminModel.findById(id)
+      .then((data) => {
+          if (!data) {
+              return res.status(404).send('A keresett adat nem található!');
+          }
+          res.send(data);
+      })
+      .catch((err) => {
+          console.log('Hiba az adat lekérdezésekor:', err);
+          res.status(500).send('Hiba az adat lekérdezésekor!');
+      });
+});
+
+// Adatok törlése
+app.delete('/api/admin/:id', (req, res) => {
+  const id = req.params.id;
+  AdminModel.findByIdAndDelete(id)
+      .then(() => {
+          console.log('Az adat törlése sikeres volt!');
+          res.status(200).json({ message: 'Az adat törlése sikeres volt!' });
+      })
+      .catch((err) => {
+          console.log('Hiba az adat törlésekor:', err);
+          res.status(500).send('Hiba az adat törlésekor!');
+      });
 });
 
 // User regisztrációs útvonal

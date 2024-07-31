@@ -1,0 +1,74 @@
+import AdminNavbar from '../components/adminNavbar'
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const AdminUserData = () => {
+
+    const [data, setData] = useState()
+    const [error, setError] = useState()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const userId = localStorage.getItem('userId');
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${userId}`);
+                if (!response.ok) {
+                    throw new Error('Hiba történt az adatok lekérdezésekor!');
+                }
+                const result = await response.json();
+                setData(result);
+            } catch (error) {
+                setError(error.message);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const handleDelete = async (id) => {
+        if (window.confirm('Biztosan törölni szeretné a regisztrációt?')) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${id}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) {
+                    throw new Error('Hiba történt a törlés során!');
+                }
+                setData(null);
+                alert('Registráció sikeresen törölve!');
+                navigate('/adminlogin')
+            } catch (error) {
+                setError(error.message);
+            }
+        }
+    };
+
+    return (
+        <div>
+            <AdminNavbar />
+            <div className="mt-20 p-4 max-w-md mx-auto bg-white shadow-md rounded-lg">
+                {error && <p className="text-red-500">{error}</p>}
+                {data ? (
+                    <div>
+                        <h2 className="text-2xl font-bold mb-4 text-center">Felhasználói adatok</h2>
+                        <div className="mb-4">
+                            <p><strong>Név:</strong> {data.username}</p>
+                            <p><strong>Email:</strong> {data.email}</p>
+                        </div>
+                        <button
+                            className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            onClick={() => handleDelete(data._id)}
+                        >
+                            Regisztráció törlése
+                        </button>
+                    </div>
+                ) : (
+                    !error && <p>Adatok betöltése...</p>
+                )}
+            </div>
+        </div>
+    );
+}
+
+export default AdminUserData

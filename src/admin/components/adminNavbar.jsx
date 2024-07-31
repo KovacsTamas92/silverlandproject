@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
+import { FaUser } from 'react-icons/fa';
 
 function AdminNavbar() {
 
     const {logout} = useAuth()
 
     const adminLogout = () => {
+        localStorage.removeItem('userId')
         logout() 
     }
 
@@ -26,6 +28,9 @@ function AdminNavbar() {
                     >
                         Kijelentkezés
                     </button>
+                    <Link to='/adminuserData' className="text-gray-300 hover:text-white transition duration-300">
+                        <FaUser className="text-white" size={20} />
+                    </Link>
                 </div>
             </div>
         </nav>

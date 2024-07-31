@@ -9,6 +9,7 @@ import AdminMainPage from "./admin/pages/AdminMainPages";
 import AdminUpload from "./admin/pages/AdminUpload";
 import AdminLogin from "./admin/pages/AdminLogin";
 import AdminRegistration from "./admin/pages/AdminRegistration";
+import AdminUserData from "./admin/pages/AdminUserData";
 import ProtectedRoute from './auth/ProtectedRoute';
 import { AuthProvider } from "./auth/AuthContext";
 
@@ -28,6 +29,7 @@ function App() {
             <Route path="/adminregistration" element={<AdminRegistration />} />
             <Route path="/adminmain" element={<ProtectedRoute element={<AdminMainPage />} />} />
             <Route path="/adminupload" element={<ProtectedRoute element={<AdminUpload />} />} />
+            <Route path="/adminuserdata" element={<ProtectedRoute element={<AdminUserData />} />} />
           </Routes>
         </div>
       </Router>

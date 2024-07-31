@@ -193,6 +193,23 @@ app.post('/api/userregistration', (req, res) => {
     });
 });
 
+// User bejelentkezési útvonal
+app.post('/api/userlogin', (req, res) => {
+  const { username, password } = req.body;
+
+  UserModel.findOne({ username, password })
+    .then((admin) => {
+      if (!admin) {
+        return res.status(401).send('Hibás felhasználónév vagy jelszó!');
+      }
+      res.status(200).send('Bejelentkezés sikeres!');
+    })
+    .catch((err) => {
+      console.log('Hiba a bejelentkezés során:', err);
+      res.status(500).send('Hiba a bejelentkezés során!');
+    });
+});
+
 
 app.listen(port, () => {
     console.log(`A szerver fut a ${port}-es porton!`);

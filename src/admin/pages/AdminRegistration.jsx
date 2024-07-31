@@ -1,0 +1,128 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminNavbar from "../components/adminNavbar";
+
+const AdminRegistration = () => {
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [masterKey, setMasterKey] = useState('');
+    const navigate = useNavigate();
+
+    const handleRegister = (e) => {
+        e.preventDefault();
+        
+        // Ellenőrzés: minden mező kitöltve
+        if (!username || !email || !password || !confirmPassword || !masterKey) {
+            alert('Kérlek töltsd ki az összes mezőt.');
+            return;
+        }
+
+        // Jelszó és a jelszó megerősítése egyeznek
+        if (password !== confirmPassword) {
+            alert('A jelszavak nem egyeznek.');
+            return;
+        }
+
+        // Regisztráció sikeres
+        alert('Sikeres regisztráció!');
+    };
+
+    const handleBack = () => {
+        navigate('/adminlogin');
+    };
+
+    return (
+        <div>
+            <AdminNavbar />
+            <div className="mt-20 p-4 max-w-md mx-auto">
+                <h2 className="text-2xl font-bold mb-6 text-center">Admin Regisztráció</h2>
+                <form onSubmit={handleRegister}>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
+                            Felhasználónév
+                        </label>
+                        <input 
+                            id="username"
+                            type="text" 
+                            value={username} 
+                            onChange={(e) => setUsername(e.target.value)} 
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                            Email cím
+                        </label>
+                        <input 
+                            id="email"
+                            type="email" 
+                            value={email} 
+                            onChange={(e) => setEmail(e.target.value)} 
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                            Jelszó
+                        </label>
+                        <input 
+                            id="password"
+                            type="password" 
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
+                            Jelszó megerősítése
+                        </label>
+                        <input 
+                            id="confirmPassword"
+                            type="password" 
+                            value={confirmPassword} 
+                            onChange={(e) => setConfirmPassword(e.target.value)} 
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="masterKey">
+                            Admin Master Key
+                        </label>
+                        <input 
+                            id="masterKey"
+                            type="password" 
+                            value={masterKey} 
+                            onChange={(e) => setMasterKey(e.target.value)} 
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                            required
+                        />
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <button 
+                            type="button" 
+                            onClick={handleBack} 
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        >
+                            Mégse
+                        </button>
+                        <button 
+                            type="submit" 
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        >
+                            Regisztráció
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}
+
+export default AdminRegistration;

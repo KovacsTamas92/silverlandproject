@@ -1,15 +1,42 @@
 import React, { useState } from 'react';
-import AdminNavbar from "../components/adminNavbar";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../auth/AuthContext';
 
 const AdminLogin = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate()
+    const {login} = useAuth()
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        navigate('/adminmain')
+        
+        if (!username || !password) {
+            alert('Kérlek, add meg a felhasználónevet és a jelszót!');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/api/adminlogin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (response.ok) {
+                alert('Bejelentkezés sikeres!');
+                login()
+                navigate('/adminmain');
+            } else {
+                const message = await response.text();
+                alert(message);
+            }
+        } catch (error) {
+            console.error('Hiba történt a bejelentkezés során:', error);
+            alert('Hiba történt a bejelentkezés során!');
+        }
     };
 
     const navigateToRegistration = () => {
@@ -18,7 +45,6 @@ const AdminLogin = () => {
 
     return (
         <div>
-            <AdminNavbar />
             <div className="mt-20 p-4 max-w-md mx-auto">
                 <h2 className="text-2xl font-bold mb-6 text-center">Silverland Admin Bejelentkezés</h2>
                 <form onSubmit={handleLogin}>

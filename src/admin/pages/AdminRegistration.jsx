@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminNavbar from "../components/adminNavbar";
 
 const AdminRegistration = () => {
     const [username, setUsername] = useState('');
@@ -63,7 +62,6 @@ const AdminRegistration = () => {
 
     return (
         <div>
-            <AdminNavbar />
             <div className="mt-20 p-4 max-w-md mx-auto">
                 <h2 className="text-2xl font-bold mb-6 text-center">Admin Regisztráció</h2>
                 <form onSubmit={handleRegister}>

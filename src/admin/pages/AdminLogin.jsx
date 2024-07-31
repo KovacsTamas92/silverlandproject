@@ -9,7 +9,7 @@ const AdminLogin = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        console.log('Bejelentkezési adatok:', { username, password });
+        navigate('/adminmain')
     };
 
     const navigateToRegistration = () => {

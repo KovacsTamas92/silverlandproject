@@ -9,6 +9,7 @@ const url = process.env.MONGOOSE_URI
 
 //Datamodel import
 const DataModel = require('./models/product')
+const AdminModel = require('./models/adminUser')
 
 // Middleware
 app.use(cors());
@@ -25,18 +26,21 @@ mongoose.connect(url)
 
 //Adatok feltöltése
 app.post('/api/data', (req, res) => {
-  if (!req.body || !req.body.file) {
+
+  const {file, name, price, description, maincategory, subcategory} = req.body
+
+  if (!req.body || !file) {
     res.status(400).send('Nincs fájl az adatokban!');
     return;
   }
 
   const data = new DataModel({
-    file: req.body.file,
-    name: req.body.name,
-    price: req.body.price,
-    description: req.body.description,
-    maincategory: req.body.maincategory,
-    subcategory: req.body.subcategory
+    file,
+    name,
+    price,
+    description,
+    maincategory,
+    subcategory
   });
 
   data.save().then(() => {
@@ -108,6 +112,35 @@ app.put('/api/data/:id', (req, res) => {
           console.log('Hiba az adat frissítésekor:', err);
           res.status(500).send('Hiba az adat frissítésekor!');
       });
+});
+
+// Admin regisztrációs útvonal
+app.post('/api/adminregistration', (req, res) => {
+  const { username, password, email, masterKey } = req.body;
+
+  if (masterKey !== process.env.ADMIN_SECRET_KEY) {
+    return res.status(403).send('Hibás admin master key!');
+  }
+
+  if (!username || !password || !email) {
+    return res.status(400).send('Nincs fájl az adatokban!');
+  }
+
+  const adminData = new AdminModel({
+    username,
+    password,
+    email,
+  });
+
+  adminData.save()
+    .then(() => {
+      console.log('Az adatok mentése sikeres volt!');
+      res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
+    })
+    .catch((err) => {
+      console.log('Hiba az adatok mentésekor:', err);
+      res.status(500).send('Hiba az adatok mentésekor!');
+    });
 });
 
 app.listen(port, () => {

@@ -10,7 +10,7 @@ const AdminRegistration = () => {
     const [masterKey, setMasterKey] = useState('');
     const navigate = useNavigate();
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         
         // Ellenőrzés: minden mező kitöltve
@@ -25,8 +25,36 @@ const AdminRegistration = () => {
             return;
         }
 
-        // Regisztráció sikeres
-        alert('Sikeres regisztráció!');
+        try {
+            await saveData();
+            alert('Sikeres regisztráció!');
+            navigate('/adminlogin');
+        } catch (error) {
+            console.error('Hiba történt az adat mentése során:', error);
+            alert('Hiba történt az adat mentése során!');
+        }
+    };
+
+    const saveData = async () => {
+        const adminData = {
+            username,
+            password,
+            email,
+            masterKey
+        };
+
+        const url = 'http://localhost:3000/api/adminregistration';
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(adminData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Hiba történt az adat mentése során!');
+        }
     };
 
     const handleBack = () => {

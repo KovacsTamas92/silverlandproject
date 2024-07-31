@@ -25,7 +25,7 @@ mongoose.connect(url)
     console.log('Hiba a MongoDB adatbázis kapcsolat során:', error);
   });
 
-//Adatok feltöltése
+//Termék feltöltése
 app.post('/api/data', (req, res) => {
 
   const {file, name, price, description, maincategory, subcategory} = req.body
@@ -53,7 +53,7 @@ app.post('/api/data', (req, res) => {
   });
 });
 
-// Adatok lekérdezése
+// Termékek lekérdezése
 app.get('/api/data', (req, res) => {
     DataModel.find({})
         .then((data) => {
@@ -66,7 +66,7 @@ app.get('/api/data', (req, res) => {
         });
 });
 
-// Adatok lekérdezése ID alapján
+// Termék lekérdezése ID alapján
 app.get('/api/data/:id', (req, res) => {
   const id = req.params.id;
   DataModel.findById(id)
@@ -82,7 +82,7 @@ app.get('/api/data/:id', (req, res) => {
       });
 });
 
-// Adatok törlése
+// Termék törlése
 app.delete('/api/data/:id', (req, res) => {
     const id = req.params.id;
     DataModel.findByIdAndDelete(id)
@@ -96,7 +96,7 @@ app.delete('/api/data/:id', (req, res) => {
         });
 });
 
-// Adatok frissítése ID alapján
+// Termék frissítése ID alapján
 app.put('/api/data/:id', (req, res) => {
   const id = req.params.id;
   const { file, name, price, description, maincategory, subcategory } = req.body;
@@ -177,7 +177,7 @@ app.get('/api/admin/:id', (req, res) => {
       });
 });
 
-// Adatok törlése
+// Admin adatok törlése ID alapján
 app.delete('/api/admin/:id', (req, res) => {
   const id = req.params.id;
   AdminModel.findByIdAndDelete(id)

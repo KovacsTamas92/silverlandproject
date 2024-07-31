@@ -63,12 +63,16 @@ const AdminMainPage = () => {
                 />
                 <div className="ml-80 mt-16 p-4 w-full">
                 <div className="mb-4">
-                        <p className="text-gray-800 font-semibold text-lg">
-                            {selectedCategory || selectedSubCategory
-                                ? `${selectedCategory || 'Összes termék'}${selectedSubCategory ? ` / ${selectedSubCategory}` : ''}`
-                                : 'Összes termék'
-                            }
-                        </p>
+                    <div className="text-lg font-semibold text-gray-800">
+                        {selectedCategory ? (
+                            <p>
+                                {selectedCategory}
+                                {selectedSubCategory && ` / ${selectedSubCategory}`}
+                            </p>
+                        ) : (
+                            'Összes termék'
+                        )}
+                    </div>
                     </div>
                     {error && <p className="text-red-500">{error}</p>}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

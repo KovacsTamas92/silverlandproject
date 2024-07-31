@@ -7,9 +7,10 @@ require('dotenv').config();
 const port = process.env.PORT
 const url = process.env.MONGOOSE_URI
 
-//Datamodel import
+//Model import
 const DataModel = require('./models/product')
 const AdminModel = require('./models/adminUser')
+const UserModel = require('./models/user')
 
 // Middleware
 app.use(cors());
@@ -157,6 +158,38 @@ app.post('/api/adminlogin', (req, res) => {
     .catch((err) => {
       console.log('Hiba a bejelentkezés során:', err);
       res.status(500).send('Hiba a bejelentkezés során!');
+    });
+});
+
+// User regisztrációs útvonal
+app.post('/api/userregistration', (req, res) => {
+  const { username, name,  password, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;
+
+  if (!username || !name || !password || !email || !phone_number || !tracking_name|| !country || !zip_code || !city || !address ) {
+    return res.status(400).send('Nincs fájl az adatokban!');
+  }
+
+  const userData = new UserModel({
+    username,
+    name,
+    password,
+    email,
+    phone_number,
+    tracking_name,
+    country,
+    zip_code,
+    city,
+    address
+  });
+
+  userData.save()
+    .then(() => {
+      console.log('Az adatok mentése sikeres volt!');
+      res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
+    })
+    .catch((err) => {
+      console.log('Hiba az adatok mentésekor:', err);
+      res.status(500).send('Hiba az adatok mentésekor!');
     });
 });
 

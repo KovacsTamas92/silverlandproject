@@ -29,7 +29,7 @@ const dataSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    zipc_ode: {
+    zip_code: {
         type: Number,
         required: true
     },

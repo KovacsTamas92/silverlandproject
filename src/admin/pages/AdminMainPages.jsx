@@ -80,7 +80,7 @@ const AdminMainPage = () => {
                     onSubCategorySelect={setSelectedSubCategory}
                 />
                 <div className="ml-80 mt-16 p-4 w-full">
-                    <div className="mb-4 flex justify-between">
+                    <div className="mb-4 flex justify-between items-center">
                         <select
                             value={sortOption}
                             onChange={(e) => setSortOption(e.target.value)}
@@ -101,24 +101,26 @@ const AdminMainPage = () => {
                         />
                     </div>
                     {error && <p className="text-red-500">{error}</p>}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-4">
                         {sortedData.map((item) => (
-                            <div key={item._id} className="bg-white p-4 border shadow-lg">
-                                <img src={item.file} alt={item.name} className="w-full h-48 object-cover"/>
-                                <h2 className="text-xl font-bold mt-4">{item.name}</h2>
-                                <p className="text-gray-600 mt-2"><strong>Ár:</strong> {item.price}Ft</p>
-                                <p className="text-gray-600 mt-2"><strong>Leírás:</strong> {item.description}</p>
-                                <p className="text-gray-600 mt-2"><strong>Fő Kategória:</strong> {item.maincategory}</p>
-                                <p className="text-gray-600 mt-2"><strong>Al Kategória:</strong> {item.subcategory}</p>
-                                <div className="mt-4 flex gap-4">
+                            <div key={item._id} className="bg-white border border-gray-300 shadow-md rounded-lg flex flex-col p-4">
+                                <img src={item.file} alt={item.name} className="w-full h-32 object-cover mb-4" />
+                                <div className="flex flex-col flex-grow">
+                                    <h2 className="text-lg font-bold mb-2">{item.name}</h2>
+                                    <p className="text-gray-600 mb-1"><strong>Ár:</strong> {item.price}Ft</p>
+                                    <p className="text-gray-600 mb-1 break-words"><strong>Leírás:</strong> {item.description}</p>
+                                    <p className="text-gray-600 mb-1"><strong>Fő Kategória:</strong> {item.maincategory}</p>
+                                    <p className="text-gray-600 mb-1"><strong>Al Kategória:</strong> {item.subcategory}</p>
+                                </div>
+                                <div className="flex flex-col gap-2 mt-4">
                                     <button
-                                        className="flex-1 bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 focus:outline-none focus:shadow-outline"
+                                        className="bg-red-500 hover:bg-red-700 text-white text-xs font-bold py-2 px-4 w-full focus:outline-none focus:shadow-outline"
                                         onClick={() => handleDelete(item._id)}
                                     >
                                         Törlés
                                     </button>
                                     <button
-                                        className="flex-1 bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 focus:outline-none focus:shadow-outline"
+                                        className="bg-blue-500 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 w-full focus:outline-none focus:shadow-outline"
                                         onClick={() => handleEdit(item._id)}
                                     >
                                         Szerkesztés
@@ -134,3 +136,5 @@ const AdminMainPage = () => {
 };
 
 export default AdminMainPage;
+
+

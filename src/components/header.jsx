@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import User from "../images/user.svg";
+import Basket from "../images/basket.png";
 
 function Header() {
   return (
@@ -7,17 +9,20 @@ function Header() {
         <ul className="flex space-x-4">
           <li>
             <Link to="/" className="text-white text-sm" aria-current="page">
-              Kosaram
+              <img
+                src={Basket}
+                alt="Basket "
+                className="w-8 h-8 rounded-full cursor-pointer"
+              />
             </Link>
           </li>
           <li>
-            <Link to="/elorendeles" className="text-white text-sm">
-              Bejelentkezés
-            </Link>
-          </li>
-          <li>
-            <Link to="/rolunk" className="text-white text-sm">
-              Regisztráció
+            <Link to="/regandlogin" className="text-white text-sm">
+              <img
+                src={User}
+                alt="User "
+                className="w-8 h-8 rounded-full cursor-pointer"
+              />
             </Link>
           </li>
         </ul>

@@ -7,6 +7,7 @@ import Rolunk from "./pages/Rolunk";
 import Kapcsolat from "./pages/Kapcsolat";
 import AdminMainPage from "./admin/pages/AdminMainPages";
 import AdminUpload from "./admin/pages/AdminUpload";
+import Regandlogin from "./pages/registrationandlogin";
 
 function App() {
   return (
@@ -19,8 +20,9 @@ function App() {
           <Route path="/rolunk" element={<Rolunk />} />
           <Route path="/kapcsolat" element={<Kapcsolat />} />
           <Route path="/description" element={<Description />} />
-          <Route path= "/adminmain" element={<AdminMainPage/>}/>
+          <Route path="/adminmain" element={<AdminMainPage />} />
           <Route path="/adminupload" element={<AdminUpload />} />
+          <Route path="/regandlogin" element={<Regandlogin />} />
         </Routes>
       </div>
     </Router>

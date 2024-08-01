@@ -191,6 +191,25 @@ app.delete('/api/admin/:id', (req, res) => {
       });
 });
 
+// Admin frissítése ID alapján
+app.put('/api/admin/:id', (req, res) => {
+  const id = req.params.id;
+  const { username, password, email } = req.body;
+
+  AdminModel.findByIdAndUpdate(id, { username, password, email}, { new: true, runValidators: true })
+      .then((updatedData) => {
+          if (!updatedData) {
+              return res.status(404).send('A keresett Admin nem található!');
+          }
+          console.log('Admin sikeresen frissítve lett!');
+          res.status(200).send(updatedData);
+      })
+      .catch((err) => {
+          console.log('Hiba az Admin frissítésekor:', err);
+          res.status(500).send('Hiba az Admin frissítésekor!');
+      });
+});
+
 // User regisztrációs útvonal
 app.post('/api/userregistration', (req, res) => {
   const { username, name,  password, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;

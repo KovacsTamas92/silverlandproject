@@ -1,12 +1,11 @@
-import AdminNavbar from '../components/adminNavbar'
+import AdminNavbar from '../components/adminNavbar';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const AdminUserData = () => {
-
-    const [data, setData] = useState()
-    const [error, setError] = useState()
-    const navigate = useNavigate()
+    const [data, setData] = useState();
+    const [error, setError] = useState();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const userId = localStorage.getItem('userId');
@@ -36,12 +35,16 @@ const AdminUserData = () => {
                     throw new Error('Hiba történt a törlés során!');
                 }
                 setData(null);
-                alert('Registráció sikeresen törölve!');
-                navigate('/adminlogin')
+                alert('Regisztráció sikeresen törölve!');
+                navigate('/adminlogin');
             } catch (error) {
                 setError(error.message);
             }
         }
+    };
+
+    const handleEdit = (id) => {
+        navigate('/adminregistration', { state: { id } });
     };
 
     return (
@@ -56,12 +59,20 @@ const AdminUserData = () => {
                             <p><strong>Név:</strong> {data.username}</p>
                             <p><strong>Email:</strong> {data.email}</p>
                         </div>
-                        <button
-                            className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            onClick={() => handleDelete(data._id)}
-                        >
-                            Regisztráció törlése
-                        </button>
+                        <div className="flex gap-4">
+                            <button
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline"
+                                onClick={() => handleDelete(data._id)}
+                            >
+                                Regisztráció törlése
+                            </button>
+                            <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline"
+                                onClick={() => handleEdit(data._id)}
+                            >
+                                Szerkesztés
+                            </button>
+                        </div>
                     </div>
                 ) : (
                     !error && <p>Adatok betöltése...</p>
@@ -71,4 +82,4 @@ const AdminUserData = () => {
     );
 }
 
-export default AdminUserData
+export default AdminUserData;

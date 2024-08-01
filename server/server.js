@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
 require('dotenv').config();
+const bcrypt = require('bcrypt');
 
 const port = process.env.PORT
 const url = process.env.MONGOOSE_URI
@@ -116,7 +117,7 @@ app.put('/api/data/:id', (req, res) => {
 });
 
 // Admin regisztrációs útvonal
-app.post('/api/adminregistration', (req, res) => {
+app.post('/api/adminregistration', async (req, res) => {
   const { username, password, email, masterKey } = req.body;
 
   if (masterKey !== process.env.ADMIN_SECRET_KEY) {
@@ -127,39 +128,47 @@ app.post('/api/adminregistration', (req, res) => {
     return res.status(400).send('Nincs fájl az adatokban!');
   }
 
-  const adminData = new AdminModel({
-    username,
-    password,
-    email,
-  });
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  adminData.save()
-    .then(() => {
-      console.log('Az adatok mentése sikeres volt!');
-      res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
-    })
-    .catch((err) => {
-      console.log('Hiba az adatok mentésekor:', err);
-      res.status(500).send('Hiba az adatok mentésekor!');
+    const adminData = new AdminModel({
+      username,
+      password: hashedPassword, 
+      email,
     });
+
+    await adminData.save();
+    console.log('Az adatok mentése sikeres volt!');
+    res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
+  } catch (err) {
+    console.log('Hiba az adatok mentésekor:', err);
+    res.status(500).send('Hiba az adatok mentésekor!');
+  }
 });
 
 // Admin bejelentkezési útvonal
-app.post('/api/adminlogin', (req, res) => {
+app.post('/api/adminlogin', async (req, res) => {
   const { username, password } = req.body;
 
-  AdminModel.findOne({ username, password })
-    .then((admin) => {
-      if (!admin) {
-        return res.status(401).send('Hibás felhasználónév vagy jelszó!');
-      }
-      res.status(200).json(admin)
-    })
-    .catch((err) => {
-      console.log('Hiba a bejelentkezés során:', err);
-      res.status(500).send('Hiba a bejelentkezés során!');
-    });
+  try {
+    const admin = await AdminModel.findOne({ username });
+    if (!admin) {
+      return res.status(401).send('Hibás felhasználónév vagy jelszó!');
+    }
+
+    // Jelszó ellenőrzése
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).send('Hibás felhasználónév vagy jelszó!');
+    }
+
+    res.status(200).json(admin);
+  } catch (err) {
+    console.log('Hiba a bejelentkezés során:', err);
+    res.status(500).send('Hiba a bejelentkezés során!');
+  }
 });
+
 
 // Admin adatok lekérdezése ID alapján
 app.get('/api/admin/:id', (req, res) => {
@@ -192,73 +201,83 @@ app.delete('/api/admin/:id', (req, res) => {
 });
 
 // Admin frissítése ID alapján
-app.put('/api/admin/:id', (req, res) => {
+app.put('/api/admin/:id', async (req, res) => {
   const id = req.params.id;
   const { username, password, email } = req.body;
 
-  AdminModel.findByIdAndUpdate(id, { username, password, email}, { new: true, runValidators: true })
-      .then((updatedData) => {
-          if (!updatedData) {
-              return res.status(404).send('A keresett Admin nem található!');
-          }
-          console.log('Admin sikeresen frissítve lett!');
-          res.status(200).send(updatedData);
-      })
-      .catch((err) => {
-          console.log('Hiba az Admin frissítésekor:', err);
-          res.status(500).send('Hiba az Admin frissítésekor!');
-      });
+  try {
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const updateData = { username, email, password: hashedPassword };
+
+    const updatedData = await AdminModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+    
+    console.log('Admin sikeresen frissítve lett!');
+    res.status(200).send(updatedData);
+  } catch (err) {
+    console.log('Hiba az Admin frissítésekor:', err);
+    res.status(500).send('Hiba az Admin frissítésekor!');
+  }
 });
 
-// User regisztrációs útvonal
-app.post('/api/userregistration', (req, res) => {
-  const { username, name,  password, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;
 
-  if (!username || !name || !password || !email || !phone_number || !tracking_name|| !country || !zip_code || !city || !address ) {
+// User regisztrációs útvonal
+app.post('/api/userregistration', async (req, res) => {
+  const { username, name, password, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;
+
+  if (!username || !name || !password || !email || !phone_number || !tracking_name || !country || !zip_code || !city || !address) {
     return res.status(400).send('Nincs fájl az adatokban!');
   }
 
-  const userData = new UserModel({
-    username,
-    name,
-    password,
-    email,
-    phone_number,
-    tracking_name,
-    country,
-    zip_code,
-    city,
-    address
-  });
+  try {
+   
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  userData.save()
-    .then(() => {
-      console.log('Az adatok mentése sikeres volt!');
-      res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
-    })
-    .catch((err) => {
-      console.log('Hiba az adatok mentésekor:', err);
-      res.status(500).send('Hiba az adatok mentésekor!');
+    const userData = new UserModel({
+      username,
+      name,
+      password: hashedPassword, // Tároljuk a titkosított jelszót
+      email,
+      phone_number,
+      tracking_name,
+      country,
+      zip_code,
+      city,
+      address
     });
+
+    await userData.save();
+    console.log('Az adatok mentése sikeres volt!');
+    res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
+  } catch (err) {
+    console.log('Hiba az adatok mentésekor:', err);
+    res.status(500).send('Hiba az adatok mentésekor!');
+  }
 });
 
 // User bejelentkezési útvonal
-app.post('/api/userlogin', (req, res) => {
+app.post('/api/userlogin', async (req, res) => {
+
   const { username, password } = req.body;
 
-  UserModel.findOne({ username, password })
-    .then((user) => {
-      if (!user) {
-        return res.status(401).send('Hibás felhasználónév vagy jelszó!');
-      }
-      res.status(200).send('Bejelentkezés sikeres!');
-    })
-    .catch((err) => {
-      console.log('Hiba a bejelentkezés során:', err);
-      res.status(500).send('Hiba a bejelentkezés során!');
-    });
-});
+  try {
 
+    const user = await UserModel.findOne({ username });
+    if (!user) {
+      return res.status(401).send('Hibás felhasználónév vagy jelszó!');
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).send('Hibás felhasználónév vagy jelszó!');
+    }
+
+    res.status(200).send('Bejelentkezés sikeres!');
+  } catch (err) {
+    console.log('Hiba a bejelentkezés során:', err);
+    res.status(500).send('Hiba a bejelentkezés során!');
+  }
+});
 
 app.listen(port, () => {
     console.log(`A szerver fut a ${port}-es porton!`);

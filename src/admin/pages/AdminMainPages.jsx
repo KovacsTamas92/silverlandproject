@@ -128,15 +128,11 @@ const AdminMainPage = () => {
                         />
                     </div>
                     {error && <p className="text-red-500">{error}</p>}
-                    <div className='h-550 w-100'>
+                    <div className='h-550'>
                         <DataGrid
                             rows={rows}
                             columns={columns}
-                           /*  pageSize={10} */
-                            /* rowsPerPageOptions={[10]} */
-                           /*  pageSizeOptions={[10]} */
-                           pageSizeOptions={[5, 10, 25]}
-                           />
+                        />
                     </div>
                 </div>
             </div>

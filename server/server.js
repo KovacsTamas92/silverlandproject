@@ -156,7 +156,6 @@ app.post('/api/adminlogin', async (req, res) => {
       return res.status(401).send('Hibás felhasználónév vagy jelszó!');
     }
 
-    // Jelszó ellenőrzése
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
       return res.status(401).send('Hibás felhasználónév vagy jelszó!');
@@ -208,7 +207,11 @@ app.put('/api/admin/:id', async (req, res) => {
   try {
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const updateData = { username, email, password: hashedPassword };
+    const updateData = { 
+      username, 
+      email, 
+      password: hashedPassword 
+    };
 
     const updatedData = await AdminModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
     
@@ -236,7 +239,7 @@ app.post('/api/userregistration', async (req, res) => {
     const userData = new UserModel({
       username,
       name,
-      password: hashedPassword, // Tároljuk a titkosított jelszót
+      password: hashedPassword, 
       email,
       phone_number,
       tracking_name,
@@ -272,12 +275,60 @@ app.post('/api/userlogin', async (req, res) => {
       return res.status(401).send('Hibás felhasználónév vagy jelszó!');
     }
 
-    res.status(200).send('Bejelentkezés sikeres!');
+    res.status(200).send(user);
   } catch (err) {
     console.log('Hiba a bejelentkezés során:', err);
     res.status(500).send('Hiba a bejelentkezés során!');
   }
 });
+
+//User elérése ID alapján
+app.get('/api/user/:id', (req, res) => {
+  const id = req.params.id;
+  UserModel.findById(id)
+      .then((data) => {
+          if (!data) {
+              return res.status(404).send('A keresett adat nem található!');
+          }
+          res.send(data);
+      })
+      .catch((err) => {
+          console.log('Hiba az adat lekérdezésekor:', err);
+          res.status(500).send('Hiba az adat lekérdezésekor!');
+      });
+});
+
+// User adatainak frissítése ID alapján
+app.put('/api/user/:id', async (req, res) => {
+  const id = req.params.id;
+  const { username, name, password, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;
+
+  try {
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const updateData = { 
+      username, 
+      name, 
+      email, 
+      phone_number, 
+      tracking_name, 
+      country, 
+      zip_code, 
+      city, 
+      address, 
+      password: hashedPassword 
+    };
+    
+    const updatedUser = await UserModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+
+    console.log('A felhasználó sikeresen frissítve lett!');
+    res.status(200).send(updatedUser);
+  } catch (err) {
+    console.log('Hiba a felhasználó frissítésekor:', err);
+    res.status(500).send('Hiba a felhasználó frissítésekor!');
+  }
+});
+
 
 app.listen(port, () => {
     console.log(`A szerver fut a ${port}-es porton!`);

@@ -8,6 +8,8 @@ const AdminMainPage = () => {
     const [error, setError] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortOption, setSortOption] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -50,8 +52,24 @@ const AdminMainPage = () => {
 
     const filteredData = data.filter(item => 
         (!selectedCategory || item.maincategory === selectedCategory) &&
-        (!selectedSubCategory || item.subcategory === selectedSubCategory)
+        (!selectedSubCategory || item.subcategory === selectedSubCategory) &&
+        (item.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
+
+    const sortedData = [...filteredData].sort((a, b) => {
+        switch (sortOption) {
+            case 'price-asc':
+                return a.price - b.price;
+            case 'price-desc':
+                return b.price - a.price;
+            case 'name-asc':
+                return a.name.localeCompare(b.name);
+            case 'name-desc':
+                return b.name.localeCompare(a.name);
+            default:
+                return 0;
+        }
+    });
 
     return (
         <div>
@@ -62,21 +80,29 @@ const AdminMainPage = () => {
                     onSubCategorySelect={setSelectedSubCategory}
                 />
                 <div className="ml-80 mt-16 p-4 w-full">
-                <div className="mb-4">
-                    <div className="text-lg font-semibold text-gray-800">
-                        {selectedCategory ? (
-                            <p>
-                                {selectedCategory}
-                                {selectedSubCategory && ` / ${selectedSubCategory}`}
-                            </p>
-                        ) : (
-                            'Összes termék'
-                        )}
-                    </div>
+                    <div className="mb-4 flex justify-between">
+                        <select
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                            className="p-2 border border-gray-300 rounded"
+                        >
+                            <option value="">Rendezés</option>
+                            <option value="price-asc">Ár szerint növekvő</option>
+                            <option value="price-desc">Ár szerint csökkenő</option>
+                            <option value="name-asc">Név szerint A-Z</option>
+                            <option value="name-desc">Név szerint Z-A</option>
+                        </select>
+                        <input 
+                            type="text"
+                            placeholder="Keresés termék név alapján..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="p-2 border border-gray-300 rounded w-64"
+                        />
                     </div>
                     {error && <p className="text-red-500">{error}</p>}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {filteredData.map((item) => (
+                        {sortedData.map((item) => (
                             <div key={item._id} className="bg-white p-4 border shadow-lg">
                                 <img src={item.file} alt={item.name} className="w-full h-48 object-cover"/>
                                 <h2 className="text-xl font-bold mt-4">{item.name}</h2>

@@ -28,7 +28,6 @@ const AdminLogin = () => {
             if (response.ok) {
                 const data = await response.json()
                 localStorage.setItem('userId', data._id)
-                alert('Bejelentkezés sikeres!');
                 login()
                 navigate('/adminmain');
             } else {

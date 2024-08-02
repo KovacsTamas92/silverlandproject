@@ -13,6 +13,7 @@ import AdminRegistration from "./admin/pages/AdminRegistration";
 import AdminUserData from "./admin/pages/AdminUserData";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthContext";
+import AdminOrderingPage from "./admin/pages/AdminOrderingPage";
 
 function App() {
   return (
@@ -40,6 +41,10 @@ function App() {
             <Route
               path="/adminuserdata"
               element={<ProtectedRoute element={<AdminUserData />} />}
+            />
+             <Route
+              path="/adminordering"
+              element={<ProtectedRoute element={<AdminOrderingPage />} />}
             />
           </Routes>
         </div>

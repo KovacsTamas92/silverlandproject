@@ -11,7 +11,7 @@ const AdminOrderingPage = () => {
     const [data, setData] = useState([]);
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('')
-    const [orderStatus, setOrderStatus] = useState('all');
+    const [orderStatus, setOrderStatus] = useState('active');
     const [isDataRefreshed, setIsDataRefreshed] = useState(false);
  
 
@@ -36,7 +36,7 @@ const AdminOrderingPage = () => {
         const orderNumber = item.order_number ? String(item.order_number) : '';
         const matchesSearchTerm = orderNumber.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesStatus = orderStatus === 'all' || (orderStatus === 'active' && item.is_active) || (orderStatus === 'completed' && !item.is_active);
+        const matchesStatus = (orderStatus === 'active' && item.is_active) || (orderStatus === 'completed' && !item.is_active);
     
         return matchesSearchTerm && matchesStatus;
     });
@@ -83,7 +83,7 @@ const AdminOrderingPage = () => {
         { field: 'city', headerName: 'Város', width: 100 }, 
         { field: 'address', headerName: 'Cím', width: 100 }, 
         { field: 'ordered_data', headerName: 'Termékek', width: 100 },
-        { field: 'price', headerName: 'Ár', type: 'number', width: 100 },
+        { field: 'price', headerName: 'Ár(Ft)', type: 'number', width: 80},
         { 
             field: '', 
             headerName: 'Action', 
@@ -92,6 +92,7 @@ const AdminOrderingPage = () => {
                 <div className="flex justify-center items-center gap-2 h-full">
                 <button
                     className="py-1 px-2"
+                    onClick={() => handleDelete(params.id)}
                 >
                     <FaTrashAlt size={20} />
                 </button>
@@ -134,6 +135,24 @@ const AdminOrderingPage = () => {
         setOrderStatus(status);
     };
 
+    const handleDelete = async (id) => {
+        if (window.confirm('Biztosan törölni szeretné ezt a rendelést?')) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/userorder/${id}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) {
+                    throw new Error('Hiba történt a rendelés során!');
+                }
+                setData(data.filter(item => item._id !== id));
+                alert('Rendelés sikeresen törölve!');
+                handleStatusChange()
+            } catch (error) {
+                setError(error.message);
+            }
+        }
+    };
+
     return (
         <div>
         <AdminNavbar />
@@ -152,10 +171,11 @@ const AdminOrderingPage = () => {
                 </div>
                 {error && <p className="text-red-500">{error}</p>}
                 <div className='h-550 w-1100 fixed'>
-                    <DataGrid
-                        rows={rows}
-                        columns={columns}
-                    />
+                <DataGrid
+                            rows={rows}
+                            columns={columns}
+                            autoHeight 
+                        />
                 </div>
             </div>
         </div>

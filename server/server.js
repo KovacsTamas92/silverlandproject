@@ -361,11 +361,11 @@ app.post('/api/userorder', async (req, res) => {
     });
 
     await orderingData.save();
-    console.log('Az adatok mentése sikeres volt!');
-    res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
+    console.log('A rendelés mentése sikeres volt!');
+    res.status(200).send('Rendelés sikeresen fogadva és mentve a szerveren.');
   } catch (err) {
-    console.log('Hiba az adatok mentésekor:', err);
-    res.status(500).send('Hiba az adatok mentésekor!');
+    console.log('Hiba az rendelés mentésekor:', err);
+    res.status(500).send('Hiba az rendelés mentésekor!');
   }
 });
 
@@ -373,16 +373,16 @@ app.post('/api/userorder', async (req, res) => {
 app.get('/api/userorder', (req, res) => {
   OrderingModel.find({})
       .then((data) => {
-          console.log('Az adatok lekérdezése sikeres volt!');
+          console.log('A rendelések lekérdezése sikeres volt!');
           res.send(data);
       })
       .catch((err) => {
-          console.log('Hiba az adatok lekérdezésekor:', err);
-          res.status(500).send('Hiba az adatok lekérdezésekor!');
+          console.log('Hiba a rendelések lekérdezésekor:', err);
+          res.status(500).send('Hiba a rendelések lekérdezésekor!');
       });
 });
 
-//Rednelés frissítés Id alapján
+//Rendelés frissítés Id alapján
 app.put('/api/userorder/:id', async (req, res) => {
   const id = req.params.id;
   const { is_active, ordered_data, name, price, email, phone_number, tracking_name, country, zip_code, city, address, order_number } = req.body;
@@ -412,6 +412,20 @@ app.put('/api/userorder/:id', async (req, res) => {
     console.log('Hiba a rendelés frissítésekor:', err);
     res.status(500).send('Hiba a rendelés frissítésekor!');
   }
+});
+
+// Admin adatok törlése ID alapján
+app.delete('/api/userorder/:id', (req, res) => {
+  const id = req.params.id;
+  OrderingModel.findByIdAndDelete(id)
+      .then(() => {
+          console.log('Rendelés törlése sikeres volt!');
+          res.status(200).json({ message: 'A rendelés törlése sikeres volt!' });
+      })
+      .catch((err) => {
+          console.log('Hiba az rendelés törlésekor:', err);
+          res.status(500).send('Hiba az rendelés törlésekor!');
+      });
 });
 
 app.listen(port, () => {

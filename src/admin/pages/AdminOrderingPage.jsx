@@ -1,11 +1,15 @@
 import AdminNavbar from "../components/adminNavbar";
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from 'react';
+import { FaTrashAlt} from "react-icons/fa";
+import { TiTickOutline } from "react-icons/ti";
+
 
 const AdminOrderingPage = () => {
 
     const [data, setData] = useState([]);
     const [error, setError] = useState('');
+    const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,6 +28,12 @@ const AdminOrderingPage = () => {
         fetchData();
     }, []);
 
+    const filteredData = data.filter(item => {
+        const orderNumber = item.order_number ? String(item.order_number) : ''; // Biztosítjuk, hogy string
+        return orderNumber.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
+
     const columns = [
         { field: 'order_number', headerName: 'Azonosító', width: 100 }, 
         { field: 'name', headerName: 'Név', width: 100 }, 
@@ -35,10 +45,29 @@ const AdminOrderingPage = () => {
         { field: 'address', headerName: 'Cím', width: 100 }, 
         { field: 'ordered_data', headerName: 'Termékek', width: 100 },
         { field: 'price', headerName: 'Ár', type: 'number', width: 100 },
-        { field: '', headerName: 'Action', width: 100 },
+        { 
+            field: '', 
+            headerName: 'Action', 
+            width: 90,
+            renderCell: (params) => (
+                <div className="flex justify-center items-center gap-2 h-full">
+                <button
+                    className="py-1 px-2"
+                >
+                    <FaTrashAlt size={20} />
+                </button>
+                <button
+                    className="py-1 px-2"
+                >
+                    <TiTickOutline size={20}/>
+                </button>
+            </div>
+            ),
+        
+        },
     ];
 
-    const rows = data.map((item) => ({
+    const rows = filteredData.map((item) => ({
         id: item._id,
         name: item.name,
         price: item.price,
@@ -53,20 +82,27 @@ const AdminOrderingPage = () => {
     }));
 
     return (
-        <div className="p-6">
+        <div>
             <AdminNavbar />
-            {error && <p className="text-red-600 mb-4">{error}</p>}
-            <div className="p-4 overflow-x-auto mt-24 mx-auto max-w-6xl">
-                <div className="w-full h-[500px]">
-                    <div className="h-full">
+                <div className="ml-80 pl-20 pt-20">
+                    <div className="mb-4 flex justify-start items-center">
+                        <input 
+                            type="number"
+                            placeholder="Keresés rendelésszám alapján..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="p-2 border border-gray-300 rounded w-64"
+                        />
+                    </div>
+                    {error && <p className="text-red-500">{error}</p>}
+                    <div className='h-550 w-1100 fixed'>
                         <DataGrid
                             rows={rows}
                             columns={columns}
                         />
                     </div>
                 </div>
-            </div>
-        </div>
+    </div>
     )
 }
 

@@ -118,7 +118,7 @@ const AdminMainPage = () => {
                     onSubCategorySelect={setSelectedSubCategory}
                 />
                 <div className="ml-80 pl-20 pt-20">
-                    <div className="mb-4 flex justify-end items-center">
+                    <div className="mb-4 flex justify-start items-center">
                         <input 
                             type="text"
                             placeholder="Keresés termék név alapján..."

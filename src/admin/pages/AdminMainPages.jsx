@@ -59,7 +59,7 @@ const AdminMainPage = () => {
     );
 
     const columns = [
-        { field: 'name', headerName: 'Név', width: 150 }, 
+        { field: 'name', headerName: 'Név', width: 200 }, 
         {
             field: 'image',
             headerName: 'Kép',
@@ -73,7 +73,7 @@ const AdminMainPage = () => {
             ),
         },
         { field: 'price', headerName: 'Ár', type: 'number', width: 100 }, 
-        { field: 'description', headerName: 'Leírás', width: 200 }, 
+        { field: 'description', headerName: 'Leírás', width: 250 }, 
         { field: 'maincategory', headerName: 'Fő Kategória', width: 150 }, 
         { field: 'subcategory', headerName: 'Al Kategória', width: 150 }, 
         {

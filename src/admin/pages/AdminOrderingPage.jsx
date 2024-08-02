@@ -3,6 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from 'react';
 import { FaTrashAlt} from "react-icons/fa";
 import { TiTickOutline } from "react-icons/ti";
+import AdminOrderSidebar from "../components/adminOrderSidebar";
 
 
 const AdminOrderingPage = () => {
@@ -29,7 +30,7 @@ const AdminOrderingPage = () => {
     }, []);
 
     const filteredData = data.filter(item => {
-        const orderNumber = item.order_number ? String(item.order_number) : ''; // Biztosítjuk, hogy string
+        const orderNumber = item.order_number ? String(item.order_number) : '';
         return orderNumber.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
@@ -83,25 +84,29 @@ const AdminOrderingPage = () => {
 
     return (
         <div>
-            <AdminNavbar />
-                <div className="ml-80 pl-20 pt-20">
-                    <div className="mb-4 flex justify-start items-center">
-                        <input 
-                            type="number"
-                            placeholder="Keresés rendelésszám alapján..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="p-2 border border-gray-300 rounded w-64"
-                        />
-                    </div>
-                    {error && <p className="text-red-500">{error}</p>}
-                    <div className='h-550 w-1100 fixed'>
-                        <DataGrid
-                            rows={rows}
-                            columns={columns}
-                        />
-                    </div>
+        <AdminNavbar />
+        <div className="flex">
+            <AdminOrderSidebar 
+            />
+            <div className="ml-80 pl-20 pt-20">
+                <div className="mb-4 flex justify-start items-center">
+                    <input 
+                        type="text"
+                        placeholder="Keresés rendelésszám alapján..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="p-2 border border-gray-300 rounded w-64"
+                    />
                 </div>
+                {error && <p className="text-red-500">{error}</p>}
+                <div className='h-550 w-1100 fixed'>
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                    />
+                </div>
+            </div>
+        </div>
     </div>
     )
 }

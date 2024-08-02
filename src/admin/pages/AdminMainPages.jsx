@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminNavbar from '../components/adminNavbar';
-import Sidebar from '../components/adminSidebar';
 import { DataGrid } from '@mui/x-data-grid';
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
+import AdminMainSidebar from '../components/adminMainSidebar';
 
 const AdminMainPage = () => {
     const [data, setData] = useState([]);
@@ -113,7 +113,7 @@ const AdminMainPage = () => {
         <div>
             <AdminNavbar />
             <div className="flex">
-                <Sidebar 
+                <AdminMainSidebar 
                     onCategorySelect={setSelectedCategory}
                     onSubCategorySelect={setSelectedSubCategory}
                 />

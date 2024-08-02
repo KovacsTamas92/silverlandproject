@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function Sidebar({ onCategorySelect, onSubCategorySelect }) {
+function AdminMainSidebar({ onCategorySelect, onSubCategorySelect }) {
     const mainCategories = [
         "Összes termék",
         "Magyar nyelvű szerepjátékok",
@@ -193,4 +193,4 @@ function Sidebar({ onCategorySelect, onSubCategorySelect }) {
     );
 }
 
-export default Sidebar;
+export default AdminMainSidebar;

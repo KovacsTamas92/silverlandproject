@@ -12,6 +12,7 @@ const url = process.env.MONGOOSE_URI
 const DataModel = require('./models/product')
 const AdminModel = require('./models/adminUser')
 const UserModel = require('./models/user')
+const OrderingModel = require('./models/oredering');
 
 // Middleware
 app.use(cors());
@@ -329,6 +330,49 @@ app.put('/api/user/:id', async (req, res) => {
   }
 });
 
+// Rendelés leadása útvonal
+app.post('/api/userorder', async (req, res) => {
+  const { name, price, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;
+
+  if (!name || !price || !email || !phone_number || !tracking_name || !country || !zip_code || !city || !address) {
+    return res.status(400).send('Nincs fájl az adatokban!');
+  }
+
+  try {
+
+    const orderingData = new OrderingModel({
+      name,
+      price, 
+      email,
+      phone_number,
+      tracking_name,
+      country,
+      zip_code,
+      city,
+      address
+    });
+
+    await orderingData.save();
+    console.log('Az adatok mentése sikeres volt!');
+    res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
+  } catch (err) {
+    console.log('Hiba az adatok mentésekor:', err);
+    res.status(500).send('Hiba az adatok mentésekor!');
+  }
+});
+
+// Rendelések lekérdezése
+app.get('/api/userorder', (req, res) => {
+  OrderingModel.find({})
+      .then((data) => {
+          console.log('Az adatok lekérdezése sikeres volt!');
+          res.send(data);
+      })
+      .catch((err) => {
+          console.log('Hiba az adatok lekérdezésekor:', err);
+          res.status(500).send('Hiba az adatok lekérdezésekor!');
+      });
+});
 
 app.listen(port, () => {
     console.log(`A szerver fut a ${port}-es porton!`);

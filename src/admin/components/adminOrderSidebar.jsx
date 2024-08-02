@@ -1,6 +1,6 @@
 function AdminOrderSidebar({ onStatusChange }) {
     const mainCategories = [
-        { name: "Aktuális Rendelések", value: "active" },
+        { name: "Aktív Rendelések", value: "active" },
         { name: "Kész Rendelések", value: "completed" }
     ];
 

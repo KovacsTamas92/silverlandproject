@@ -36,6 +36,14 @@ const orderingSchema = new mongoose.Schema({
     address: {
         type: String,
         required: true
+    },
+    ordered_data: {
+        type: String,
+        required: true
+    },
+    order_number:{
+        type: Number,
+        required: true
     }
 });
 

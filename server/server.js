@@ -332,14 +332,19 @@ app.put('/api/user/:id', async (req, res) => {
 
 // Rendelés leadása útvonal
 app.post('/api/userorder', async (req, res) => {
-  const { name, price, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;
+  const { ordered_data, name, price, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;
 
-  if (!name || !price || !email || !phone_number || !tracking_name || !country || !zip_code || !city || !address) {
+  if (!ordered_data || !name || !price || !email || !phone_number || !tracking_name || !country || !zip_code || !city || !address) {
     return res.status(400).send('Nincs fájl az adatokban!');
   }
 
-  try {
+  const generateOrderNumber = () => {
+    return Math.floor(10000000 + Math.random() * 90000000).toString();
+  };
 
+  const orderNumber = generateOrderNumber();
+
+  try {
     const orderingData = new OrderingModel({
       name,
       price, 
@@ -349,7 +354,9 @@ app.post('/api/userorder', async (req, res) => {
       country,
       zip_code,
       city,
-      address
+      address,
+      ordered_data,
+      order_number: orderNumber
     });
 
     await orderingData.save();

@@ -356,7 +356,8 @@ app.post('/api/userorder', async (req, res) => {
       city,
       address,
       ordered_data,
-      order_number: orderNumber
+      order_number: orderNumber,
+      is_active: true
     });
 
     await orderingData.save();
@@ -379,6 +380,38 @@ app.get('/api/userorder', (req, res) => {
           console.log('Hiba az adatok lekérdezésekor:', err);
           res.status(500).send('Hiba az adatok lekérdezésekor!');
       });
+});
+
+//Rednelés frissítés Id alapján
+app.put('/api/userorder/:id', async (req, res) => {
+  const id = req.params.id;
+  const { is_active, ordered_data, name, price, email, phone_number, tracking_name, country, zip_code, city, address, order_number } = req.body;
+
+  try {
+
+    const updatedOrderingData = {
+      name,
+      price, 
+      email,
+      phone_number,
+      tracking_name,
+      country,
+      zip_code,
+      city,
+      address,
+      ordered_data,
+      order_number,
+      is_active
+    };
+    
+    const updatedOrdering = await OrderingModel.findByIdAndUpdate(id, updatedOrderingData, { new: true, runValidators: true });
+
+    console.log('A rendelés sikeresen frissítve lett!');
+    res.status(200).send(updatedOrdering);
+  } catch (err) {
+    console.log('Hiba a rendelés frissítésekor:', err);
+    res.status(500).send('Hiba a rendelés frissítésekor!');
+  }
 });
 
 app.listen(port, () => {

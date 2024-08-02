@@ -1,9 +1,9 @@
 import AdminNavbar from "../components/adminNavbar";
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from 'react';
-import { FaTrashAlt} from "react-icons/fa";
+import { FaTrashAlt, FaBackward} from "react-icons/fa";
 import { TiTickOutline } from "react-icons/ti";
-import AdminOrderSidebar from "../components/adminOrderSidebar";
+import AdminOrderSidebar from '../components/adminOrderSidebar'
 
 
 const AdminOrderingPage = () => {
@@ -11,6 +11,9 @@ const AdminOrderingPage = () => {
     const [data, setData] = useState([]);
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('')
+    const [orderStatus, setOrderStatus] = useState('all');
+    const [isDataRefreshed, setIsDataRefreshed] = useState(false);
+ 
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,12 +30,47 @@ const AdminOrderingPage = () => {
         };
 
         fetchData();
-    }, []);
+    }, [isDataRefreshed]);
 
     const filteredData = data.filter(item => {
         const orderNumber = item.order_number ? String(item.order_number) : '';
-        return orderNumber.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearchTerm = orderNumber.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesStatus = orderStatus === 'all' || (orderStatus === 'active' && item.is_active) || (orderStatus === 'completed' && !item.is_active);
+    
+        return matchesSearchTerm && matchesStatus;
     });
+
+    const handleActive = async (id) => {
+
+        let isActive = false
+
+        if(orderStatus === 'completed'){
+            isActive = true
+            alert('Biztos, hogy újra aktíválod a rendelést?')
+        }else{
+            alert('Biztos, hogy kész a rendelés?')
+        }
+
+        try{
+        const response = await fetch(`http://localhost:3000/api/userorder/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({is_active: isActive}),
+        });
+
+        if (!response.ok) {
+            throw new Error('Hiba történt az adat mentése során!');
+        }
+
+        setIsDataRefreshed(prev => !prev);
+
+        } catch (error) {
+            console.error('Hiba történt az adat mentése során:', error);
+        }
+    }
 
 
     const columns = [
@@ -57,11 +95,21 @@ const AdminOrderingPage = () => {
                 >
                     <FaTrashAlt size={20} />
                 </button>
-                <button
-                    className="py-1 px-2"
-                >
-                    <TiTickOutline size={20}/>
-                </button>
+                {orderStatus === 'active' ? (
+                    <button
+                        className="py-1 px-2"
+                        onClick={()=>handleActive(params.id)}
+                    >
+                        <TiTickOutline size={20}/>
+                    </button>
+                ) : (
+                    <button
+                        className="py-1 px-2"
+                        onClick={()=>(handleActive(params.id))}
+                    >
+                        <FaBackward size={20}/>
+                    </button>
+                )}
             </div>
             ),
         
@@ -82,11 +130,15 @@ const AdminOrderingPage = () => {
         order_number: item.order_number
     }));
 
+    const handleStatusChange = (status) => {
+        setOrderStatus(status);
+    };
+
     return (
         <div>
         <AdminNavbar />
         <div className="flex">
-            <AdminOrderSidebar 
+            <AdminOrderSidebar onStatusChange={handleStatusChange}
             />
             <div className="ml-80 pl-20 pt-20">
                 <div className="mb-4 flex justify-start items-center">

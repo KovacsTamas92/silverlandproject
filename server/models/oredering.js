@@ -44,6 +44,10 @@ const orderingSchema = new mongoose.Schema({
     order_number:{
         type: Number,
         required: true
+    },
+    is_active:{
+        type: Boolean,
+        required: true
     }
 });
 

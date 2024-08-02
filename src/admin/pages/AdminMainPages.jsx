@@ -31,7 +31,6 @@ const AdminMainPage = () => {
     }, []);
 
     const handleDelete = async (id) => {
-        console.log(id)
         if (window.confirm('Biztosan törölni szeretné ezt a terméket?')) {
             try {
                 const response = await fetch(`http://localhost:3000/api/data/${id}`, {

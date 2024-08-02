@@ -128,7 +128,7 @@ const AdminMainPage = () => {
                         />
                     </div>
                     {error && <p className="text-red-500">{error}</p>}
-                    <div className='h-550'>
+                    <div className='h-550 w-1100 fixed'>
                         <DataGrid
                             rows={rows}
                             columns={columns}

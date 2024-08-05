@@ -8,7 +8,7 @@ const AdminUserData = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const userId = localStorage.getItem('userId');
+        const userId = sessionStorage.getItem('userId');
         const fetchData = async () => {
             try {
                 const response = await fetch(`http://localhost:3000/api/admin/${userId}`);

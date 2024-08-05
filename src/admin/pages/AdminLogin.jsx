@@ -27,7 +27,7 @@ const AdminLogin = () => {
 
             if (response.ok) {
                 const data = await response.json()
-                localStorage.setItem('userId', data._id)
+                sessionStorage.setItem('userId', data._id)
                 login()
                 navigate('/adminmain');
             } else {

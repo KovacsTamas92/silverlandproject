@@ -1,11 +1,14 @@
 import AdminNavbar from '../components/adminNavbar';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AdminPopupWindows from '../popup/AdminPopupWindows';
 
 const AdminUserData = () => {
     const [data, setData] = useState();
     const [error, setError] = useState();
     const navigate = useNavigate();
+    const [popupMessage, setPopupMessage] = useState('')
+    const [popupNavigate, setPopupNavigate] = useState('')
 
     useEffect(() => {
         const userId = sessionStorage.getItem('userId');
@@ -25,7 +28,7 @@ const AdminUserData = () => {
         fetchData();
     }, []);
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (id) => { 
         if (window.confirm('Biztosan törölni szeretné a regisztrációt?')) {
             try {
                 const response = await fetch(`http://localhost:3000/api/admin/${id}`, {
@@ -35,8 +38,8 @@ const AdminUserData = () => {
                     throw new Error('Hiba történt a törlés során!');
                 }
                 setData(null);
-                alert('Regisztráció sikeresen törölve!');
-                navigate('/adminlogin');
+                setPopupNavigate('/adminlogin')   
+                setPopupMessage('Regisztráció sikeresen törölve!')  
             } catch (error) {
                 setError(error.message);
             }
@@ -78,6 +81,10 @@ const AdminUserData = () => {
                     !error && <p>Adatok betöltése...</p>
                 )}
             </div>
+            <AdminPopupWindows
+                message={popupMessage} 
+                popupNavigate={popupNavigate}
+            />
         </div>
     );
 }

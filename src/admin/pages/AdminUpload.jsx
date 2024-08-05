@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminNavbar from '../components/adminNavbar';
 import { useLocation, useNavigate } from 'react-router-dom';
+import AdminPopupWindows from '../popup/AdminPopupWindows';
 
 const AdminUpload = () => {
     const mainCategories = [
@@ -68,7 +69,9 @@ const AdminUpload = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
-    const [itemId, setItemId] = useState(null); // Az item ID tárolása
+    const [itemId, setItemId] = useState(null); 
+    const [popupMessage, setPopupMessage] = useState('')
+    const [popupNavigate, setPopupNavigate] = useState('')
 
     useEffect(() => {
         if (location.state && location.state.id) {
@@ -111,7 +114,8 @@ const AdminUpload = () => {
         e.preventDefault();
     
         if (!selectedMainCategory || !selectedSubCategory || !name || !price || !description) {
-            alert('Minden mezőt ki kell tölteni!');
+            setPopupMessage('Minden mezőt ki kell tölteni!')
+            setPopupNavigate("")
             return;
         }
     
@@ -150,8 +154,8 @@ const AdminUpload = () => {
             if (!response.ok) {
                 throw new Error('Hiba történt az adat mentése során!');
             }
-            alert('Termék sikeresen mentve!');
-            navigate('/adminmain');
+            setPopupNavigate('/adminmain')   
+            setPopupMessage('Termék sikeresen mentve!')   
         } catch (error) {
             console.error('Hiba történt az adat mentése során:', error);
         }
@@ -272,6 +276,10 @@ const AdminUpload = () => {
                     </div>
                 </form>
             </div>
+            <AdminPopupWindows
+                message={popupMessage} 
+                popupNavigate={popupNavigate}
+            />
         </div>
     );
 };

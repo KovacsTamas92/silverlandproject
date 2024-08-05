@@ -96,7 +96,7 @@ const AdminOrderingEdit = () => {
                         </label>
                         <input
                             id="price"
-                            type="text"
+                            type="number"
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -122,7 +122,7 @@ const AdminOrderingEdit = () => {
                         </label>
                         <input
                             id="phone_number"
-                            type="text"
+                            type="number"
                             value={phone_number}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -148,7 +148,7 @@ const AdminOrderingEdit = () => {
                         </label>
                         <input
                             id="zip_code"
-                            type="text"
+                            type="number"
                             value={zip_code}
                             onChange={(e) => setZipCode(e.target.value)}
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

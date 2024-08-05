@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminNavbar from '../components/adminNavbar';
+import AdminPopupWindows from '../popup/AdminPopupWindows';
 
 const AdminRegistration = () => {
     const [username, setUsername] = useState('');
@@ -9,6 +10,8 @@ const AdminRegistration = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [masterKey, setMasterKey] = useState('');
     const [itemId, setItemId] = useState(null)
+    const [popupMessage, setPopupMessage] = useState('')
+    const [popupNavigate, setPopupNavigate] = useState('')
     const navigate = useNavigate();
     const location = useLocation()
 
@@ -17,23 +20,25 @@ const AdminRegistration = () => {
         
         // Ellenőrzés: minden mező kitöltve
         if (!username || !email || !password || !confirmPassword || !masterKey) {
-            alert('Kérlek töltsd ki az összes mezőt.');
+            setPopupMessage('Kérlek töltsd ki az összes mezőt.')
+            setPopupNavigate('')
             return;
         }
 
         // Jelszó és a jelszó megerősítése egyeznek
         if (password !== confirmPassword) {
-            alert('A jelszavak nem egyeznek.');
+            setPopupMessage('A jelszavak nem egyeznek.')
+            setPopupNavigate('')
             return;
         }
 
         try {
             await saveData();
-            alert('Sikeres regisztráció!');
-            navigate('/adminlogin');
+            setPopupMessage('Sikeres regisztráció!')
+            setPopupNavigate('/adminlogin')
         } catch (error) {
-            console.error('Hiba történt az adat mentése során:', error);
-            alert('Hiba történt az adat mentése során!');
+            setPopupMessage(`Hiba történt az adat mentése során!, ${error}`)
+            setPopupNavigate('')
         }
     };
 
@@ -77,7 +82,8 @@ const AdminRegistration = () => {
                     setUsername(item.username);
                     setEmail(item.email)
                 } catch (error) {
-                    console.error('Hiba a termék adatainak betöltése során:', error);
+                    setPopupMessage(`Hiba történt az adatok lekérdezése során!, ${error}`)
+                    setPopupNavigate('');
                 }
             };
             fetchItem();
@@ -172,6 +178,10 @@ const AdminRegistration = () => {
                         </div>
                     </form>
                 </div>
+                <AdminPopupWindows
+                message={popupMessage} 
+                popupNavigate={popupNavigate}
+            />
         </div>
     );
 }

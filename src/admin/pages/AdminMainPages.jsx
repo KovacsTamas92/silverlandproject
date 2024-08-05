@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminNavbar from '../components/adminNavbar';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import AdminMainSidebar from '../components/adminMainSidebar';
 
@@ -131,6 +131,12 @@ const AdminMainPage = () => {
                         <DataGrid
                             rows={rows}
                             columns={columns}
+                            getRowHeight={() => 'auto'}
+                            sx={{
+                                [`& .${gridClasses.cell}`]: {
+                                  py: 1,
+                                },
+                              }}
                         />
                     </div>
                 </div>

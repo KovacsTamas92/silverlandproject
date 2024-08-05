@@ -330,6 +330,20 @@ app.put('/api/user/:id', async (req, res) => {
   }
 });
 
+// User adatok törlése ID alapján
+app.delete('/api/user/:id', (req, res) => {
+  const id = req.params.id;
+  UserModel.findByIdAndDelete(id)
+      .then(() => {
+          console.log('Az adat törlése sikeres volt!');
+          res.status(200).json({ message: 'Az adat törlése sikeres volt!' });
+      })
+      .catch((err) => {
+          console.log('Hiba az adat törlésekor:', err);
+          res.status(500).send('Hiba az adat törlésekor!');
+      });
+});
+
 // Rendelés leadása útvonal
 app.post('/api/userorder', async (req, res) => {
   const { ordered_data, name, price, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;
@@ -414,7 +428,7 @@ app.put('/api/userorder/:id', async (req, res) => {
   }
 });
 
-// Admin adatok törlése ID alapján
+// Rendelési adatok törlése ID alapján
 app.delete('/api/userorder/:id', (req, res) => {
   const id = req.params.id;
   OrderingModel.findByIdAndDelete(id)

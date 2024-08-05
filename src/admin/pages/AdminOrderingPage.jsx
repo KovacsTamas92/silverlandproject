@@ -1,8 +1,9 @@
 import AdminNavbar from "../components/adminNavbar";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import React, { useEffect, useState } from 'react';
 import { FaTrashAlt, FaBackward} from "react-icons/fa";
 import { TiTickOutline } from "react-icons/ti";
+import { BsPencilSquare } from "react-icons/bs";
 import AdminOrderSidebar from '../components/adminOrderSidebar'
 
 
@@ -79,7 +80,7 @@ const AdminOrderingPage = () => {
         { field: 'email', headerName: 'Email', width: 100 }, 
         { field: 'phone_number', headerName: 'Telefonszám', type: 'number', width: 100 }, 
         { field: 'country', headerName: 'Ország', width: 100 }, 
-        { field: 'zip_code', headerName: 'Irányítószám', type: 'number', width: 100 }, 
+        { field: 'zip_code', headerName: 'Irányítószám', type: 'number', width: 60 }, 
         { field: 'city', headerName: 'Város', width: 100 }, 
         { field: 'address', headerName: 'Cím', width: 100 }, 
         { field: 'ordered_data', headerName: 'Termékek', width: 100 },
@@ -87,7 +88,7 @@ const AdminOrderingPage = () => {
         { 
             field: '', 
             headerName: 'Action', 
-            width: 90,
+            width: 120,
             renderCell: (params) => (
                 <div className="flex justify-center items-center gap-2 h-full">
                 <button
@@ -97,12 +98,20 @@ const AdminOrderingPage = () => {
                     <FaTrashAlt size={20} />
                 </button>
                 {orderStatus === 'active' ? (
+                    <div className="flex">
                     <button
                         className="py-1 px-2"
-                        onClick={()=>handleActive(params.id)}
+                        onClick={() => handleEdit(params.id)}
                     >
-                        <TiTickOutline size={20}/>
+                        <TiTickOutline size={20} />
                     </button>
+                    <button
+                        className="py-1 px-2"
+                        onClick={() => handleDelete(params.id)}
+                    >
+                        <BsPencilSquare size={20}/>
+                    </button>
+                </div>
                 ) : (
                     <button
                         className="py-1 px-2"
@@ -174,7 +183,12 @@ const AdminOrderingPage = () => {
                 <DataGrid
                             rows={rows}
                             columns={columns}
-                            autoHeight 
+                            getRowHeight={() => 'auto'}
+                            sx={{
+                                [`& .${gridClasses.cell}`]: {
+                                  py: 1,
+                                },
+                              }}
                         />
                 </div>
             </div>

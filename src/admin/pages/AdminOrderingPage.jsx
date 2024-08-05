@@ -6,6 +6,7 @@ import { TiTickOutline } from "react-icons/ti";
 import { BsPencilSquare } from "react-icons/bs";
 import AdminOrderSidebar from '../components/adminOrderSidebar'
 import { useNavigate } from "react-router-dom";
+import AdminPopupWindows from "../popup/AdminPopupWindows";
 
 
 const AdminOrderingPage = () => {
@@ -15,6 +16,8 @@ const AdminOrderingPage = () => {
     const [searchTerm, setSearchTerm] = useState('')
     const [orderStatus, setOrderStatus] = useState('active');
     const [isDataRefreshed, setIsDataRefreshed] = useState(false);
+    const [popupMessage, setPopupMessage] = useState('')
+    const [popupNavigate, setPopupNavigate] = useState('')
     const navigate = useNavigate()
  
 
@@ -50,9 +53,11 @@ const AdminOrderingPage = () => {
 
         if(orderStatus === 'completed'){
             isActive = true
-            alert('Biztos, hogy újra aktíválod a rendelést?')
+            setPopupNavigate('')   
+            setPopupMessage('Biztos, hogya újra aktiválod a rendelést?') 
         }else{
-            alert('Biztos, hogy kész a rendelés?')
+            setPopupNavigate('')   
+            setPopupMessage('Biztos lezárod a rendelés?') 
         }
 
         try{
@@ -170,35 +175,39 @@ const AdminOrderingPage = () => {
 
     return (
         <div>
-        <AdminNavbar />
-        <div className="flex">
-            <AdminOrderSidebar onStatusChange={handleStatusChange}
-            />
-            <div className="ml-80 pl-20 pt-20">
-                <div className="mb-4 flex justify-start items-center">
-                    <input 
-                        type="text"
-                        placeholder="Keresés rendelésszám alapján..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="p-2 border border-gray-300 rounded w-64"
-                    />
-                </div>
-                {error && <p className="text-red-500">{error}</p>}
-                <div className='h-550 w-1100 fixed'>
-                <DataGrid
-                            rows={rows}
-                            columns={columns}
-                            getRowHeight={() => 'auto'}
-                            sx={{
-                                [`& .${gridClasses.cell}`]: {
-                                  py: 1,
-                                },
-                              }}
+            <AdminNavbar />
+            <div className="flex">
+                <AdminOrderSidebar onStatusChange={handleStatusChange}
+                />
+                <div className="ml-80 pl-20 pt-20">
+                    <div className="mb-4 flex justify-start items-center">
+                        <input 
+                            type="text"
+                            placeholder="Keresés rendelésszám alapján..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="p-2 border border-gray-300 rounded w-64"
                         />
+                    </div>
+                    {error && <p className="text-red-500">{error}</p>}
+                    <div className='h-550 w-1100 fixed'>
+                    <DataGrid
+                                rows={rows}
+                                columns={columns}
+                                getRowHeight={() => 'auto'}
+                                sx={{
+                                    [`& .${gridClasses.cell}`]: {
+                                    py: 1,
+                                    },
+                                }}
+                            />
+                    </div>
                 </div>
             </div>
-        </div>
+        <AdminPopupWindows
+            message={popupMessage} 
+            popupNavigate={popupNavigate}
+        />
     </div>
     )
 }

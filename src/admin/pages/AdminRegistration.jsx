@@ -17,15 +17,7 @@ const AdminRegistration = () => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        
-        // Ellenőrzés: minden mező kitöltve
-        if (!username || !email || !password || !confirmPassword || !masterKey) {
-            setPopupMessage('Kérlek töltsd ki az összes mezőt.')
-            setPopupNavigate('')
-            return;
-        }
 
-        // Jelszó és a jelszó megerősítése egyeznek
         if (password !== confirmPassword) {
             setPopupMessage('A jelszavak nem egyeznek.')
             setPopupNavigate('')
@@ -89,6 +81,14 @@ const AdminRegistration = () => {
             fetchItem();
         }
     }, [location.state]);
+
+    useEffect(() => {
+        if (popupNavigate) {
+            navigate(popupNavigate);
+            setPopupMessage('');
+            setPopupNavigate('');
+        }
+    }, [popupNavigate, navigate]);
 
     return (
         <div>

@@ -5,6 +5,7 @@ import { FaTrashAlt, FaBackward} from "react-icons/fa";
 import { TiTickOutline } from "react-icons/ti";
 import { BsPencilSquare } from "react-icons/bs";
 import AdminOrderSidebar from '../components/adminOrderSidebar'
+import { useNavigate } from "react-router-dom";
 
 
 const AdminOrderingPage = () => {
@@ -14,6 +15,7 @@ const AdminOrderingPage = () => {
     const [searchTerm, setSearchTerm] = useState('')
     const [orderStatus, setOrderStatus] = useState('active');
     const [isDataRefreshed, setIsDataRefreshed] = useState(false);
+    const navigate = useNavigate()
  
 
     useEffect(() => {
@@ -101,13 +103,13 @@ const AdminOrderingPage = () => {
                     <div className="flex">
                     <button
                         className="py-1 px-2"
-                        onClick={() => handleEdit(params.id)}
+                        onClick={() => handleActive(params.id)}
                     >
                         <TiTickOutline size={20} />
                     </button>
                     <button
                         className="py-1 px-2"
-                        onClick={() => handleDelete(params.id)}
+                        onClick={() => handleEdit(params.id)}
                     >
                         <BsPencilSquare size={20}/>
                     </button>
@@ -160,6 +162,10 @@ const AdminOrderingPage = () => {
                 setError(error.message);
             }
         }
+    };
+
+    const handleEdit = (id) => {
+        navigate('/adminorderingedit', { state: { id } });
     };
 
     return (

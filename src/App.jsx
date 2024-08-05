@@ -14,6 +14,7 @@ import AdminUserData from "./admin/pages/AdminUserData";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthContext";
 import AdminOrderingPage from "./admin/pages/AdminOrderingPage";
+import AdminOrderingEdit from "./admin/pages/AdminOrderingEdit";
 
 function App() {
   return (
@@ -45,6 +46,10 @@ function App() {
              <Route
               path="/adminordering"
               element={<ProtectedRoute element={<AdminOrderingPage />} />}
+            />
+              <Route
+              path="/adminorderingedit"
+              element={<ProtectedRoute element={<AdminOrderingEdit />} />}
             />
           </Routes>
         </div>

@@ -442,6 +442,22 @@ app.delete('/api/userorder/:id', (req, res) => {
       });
 });
 
+//Rendelés elérése ID alapján
+app.get('/api/userorder/:id', (req, res) => {
+  const id = req.params.id;
+  OrderingModel.findById(id)
+      .then((data) => {
+          if (!data) {
+              return res.status(404).send('A keresett rendelés nem található!');
+          }
+          res.send(data);
+      })
+      .catch((err) => {
+          console.log('Hiba a rendelés lekérdezésekor:', err);
+          res.status(500).send('Hiba a rendelés lekérdezésekor!');
+      });
+});
+
 app.listen(port, () => {
     console.log(`A szerver fut a ${port}-es porton!`);
 });

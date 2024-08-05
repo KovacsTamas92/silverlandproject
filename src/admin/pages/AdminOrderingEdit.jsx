@@ -5,8 +5,6 @@ import AdminNavbar from "../components/adminNavbar";
 const AdminOrderingEdit = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    
-    // Form mezők állapotváltozói
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [email, setEmail] = useState("");
@@ -25,7 +23,6 @@ const AdminOrderingEdit = () => {
                     throw new Error("Hiba történt a termék adatainak lekérdezésekor!");
                 }
                 const item = await response.json();
-                // Az állapot beállítása a lekérdezett adatokkal
                 setName(item.name);
                 setPrice(item.price);
                 setEmail(item.email);

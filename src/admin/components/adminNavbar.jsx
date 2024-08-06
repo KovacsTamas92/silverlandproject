@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import { FaUser } from 'react-icons/fa';
+import AdminPopupWindows from '../pages/AdminPopupWindows';
 
 function AdminNavbar() {
 
+    const [popupMessage, setPopupMessage] = useState('')
+    const [popupNavigate, setPopupNavigate] = useState('')
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
+    const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
+
     const {logout} = useAuth()
 
+    const handleAdminLogout = () => {
+        setPopupMessage('Biztos kijelentkezik?')
+        setPopupWindowCancelButtonPreview(true)
+        setPopupConfirmCallback(()=>()=>(adminLogout()))
+    }
+
     const adminLogout = () => {
-        localStorage.removeItem('userId')
+        sessionStorage.removeItem('userId')
         logout() 
     }
 
@@ -26,7 +38,7 @@ function AdminNavbar() {
                         Feltöltés
                     </Link>
                     <button
-                        onClick={adminLogout}
+                        onClick={handleAdminLogout}
                         className="text-gray-300 hover:text-white transition duration-300 focus:outline-none"
                     >
                         Kijelentkezés
@@ -36,6 +48,19 @@ function AdminNavbar() {
                     </Link>
                 </div>
             </div>
+            {popupMessage && (
+                  <AdminPopupWindows
+                  message={popupMessage} 
+                  popupNavigate={popupNavigate}
+                  onConfirm={popupConfirmCallback} 
+                  onCancel={() => {
+                    setPopupMessage('');
+                    setPopupNavigate('');
+                    setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")));
+                  }}
+                  popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
+              />
+            )}
         </nav>
     );
 }

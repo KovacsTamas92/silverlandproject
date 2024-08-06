@@ -1,9 +1,7 @@
 import AdminNavbar from "../components/adminNavbar";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import { FaTrashAlt, FaBackward } from "react-icons/fa";
-import { TiTickOutline } from "react-icons/ti";
-import { BsPencilSquare } from "react-icons/bs";
+import { FaTrashAlt, FaBackward, FaEdit, FaCheck } from "react-icons/fa";
 import AdminOrderSidebar from "../components/adminOrderSidebar";
 import { useNavigate } from "react-router-dom";
 import AdminPopupWindows from "../popup/AdminPopupWindows";
@@ -11,7 +9,6 @@ import AdminPopupWindows from "../popup/AdminPopupWindows";
 const AdminOrderingPage = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
   const [orderStatus, setOrderStatus] = useState("active");
   const [isDataRefreshed, setIsDataRefreshed] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
@@ -37,17 +34,12 @@ const AdminOrderingPage = () => {
   }, [isDataRefreshed]);
 
   const filteredData = data.filter((item) => {
-    const orderNumber = item.order_number ? String(item.order_number) : "";
-    const matchesSearchTerm = orderNumber
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
     const matchesStatus =
       (orderStatus === "active" && item.is_active) ||
       (orderStatus === "completed" && !item.is_active);
 
-    return matchesSearchTerm && matchesStatus;
-  });
+    return matchesStatus;
+  })
 
   const confirmActiveChange = (id) => {
     let isActive = false;
@@ -89,13 +81,40 @@ const AdminOrderingPage = () => {
     }
   };
 
+  const handleStatusChange = (status) => {
+    setOrderStatus(status);
+  };
+
+  const handleDelete = async (id) => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/userorder/${id}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          throw new Error("Hiba történt a törlés során!");
+        }
+        setData(data.filter((item) => item._id !== id));
+        setIsDataRefreshed((prev) => !prev);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setPopupMessage('');
+        setPopupNavigate('');
+        setPopupConfirmCallback(null);
+      }
+  };
+
+  const handleEdit = (id) => {
+    navigate("/adminorderingedit", { state: { id } });
+  };
+
   const columns = [
     { field: "order_number", headerName: "Azonosító", width: 100 },
     { field: "name", headerName: "Név", width: 100 },
     { field: "email", headerName: "Email", width: 100 },
-    { field: "phone_number", headerName: "Telefonszám", type: "number", width: 100 },
+    { field: "phone_number", headerName: "Telefonszám", width: 100 },
     { field: "country", headerName: "Ország", width: 100 },
-    { field: "zip_code", headerName: "Irányítószám", type: "number", width: 60 },
+    { field: "zip_code", headerName: "Irányítószám", width: 60 },
     { field: "city", headerName: "Város", width: 100 },
     { field: "address", headerName: "Cím", width: 100 },
     { field: "ordered_data", headerName: "Termékek", width: 100 },
@@ -112,10 +131,10 @@ const AdminOrderingPage = () => {
           {orderStatus === "active" ? (
             <div className="flex">
               <button className="py-1 px-2" onClick={() => confirmActiveChange(params.id)}>
-                <TiTickOutline size={20} />
+                <FaCheck size={20} />
               </button>
               <button className="py-1 px-2" onClick={() => handleEdit(params.id)}>
-                <BsPencilSquare size={20} />
+                <FaEdit size={20} />
               </button>
             </div>
           ) : (
@@ -142,48 +161,12 @@ const AdminOrderingPage = () => {
     order_number: item.order_number,
   }));
 
-  const handleStatusChange = (status) => {
-    setOrderStatus(status);
-  };
-
-  const handleDelete = async (id) => {
-      try {
-        const response = await fetch(`http://localhost:3000/api/userorder/${id}`, {
-          method: "DELETE",
-        });
-        if (!response.ok) {
-          throw new Error("Hiba történt a rendelés során!");
-        }
-        setData(data.filter((item) => item._id !== id));
-        setIsDataRefreshed((prev) => !prev);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setPopupMessage('');
-        setPopupNavigate('');
-        setPopupConfirmCallback(null);
-      }
-  };
-
-  const handleEdit = (id) => {
-    navigate("/adminorderingedit", { state: { id } });
-  };
-
   return (
     <div>
       <AdminNavbar />
       <div className="flex">
         <AdminOrderSidebar onStatusChange={handleStatusChange} />
         <div className="ml-80 pl-20 pt-20">
-          <div className="mb-4 flex justify-start items-center">
-            <input
-              type="text"
-              placeholder="Keresés rendelésszám alapján..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="p-2 border border-gray-300 rounded w-64"
-            />
-          </div>
           {error && <p className="text-red-500">{error}</p>}
           <div className="h-550 w-1100 fixed">
             <DataGrid

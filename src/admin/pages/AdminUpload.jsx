@@ -72,6 +72,7 @@ const AdminUpload = () => {
     const [itemId, setItemId] = useState(null); 
     const [popupMessage, setPopupMessage] = useState('')
     const [popupNavigate, setPopupNavigate] = useState('')
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
 
     useEffect(() => {
         if (location.state && location.state.id) {
@@ -92,6 +93,9 @@ const AdminUpload = () => {
                     setFilePreview(item.file);
                 } catch (error) {
                     console.error('Hiba a termék adatainak betöltése során:', error);
+                    setPopupNavigate('')   
+                    setPopupMessage(`Hiba történt az adatainak betöltése során:${error}`)   
+                    setPopupConfirmCallback(null)
                 }
             };
             fetchItem();
@@ -116,6 +120,7 @@ const AdminUpload = () => {
         if (!selectedMainCategory || !selectedSubCategory || !name || !price || !description) {
             setPopupMessage('Minden mezőt ki kell tölteni!')
             setPopupNavigate("")
+            setPopupConfirmCallback(null)
             return;
         }
     
@@ -156,8 +161,11 @@ const AdminUpload = () => {
             }
             setPopupNavigate('/adminmain')   
             setPopupMessage('Termék sikeresen mentve!')   
+            setPopupConfirmCallback(null)
         } catch (error) {
-            console.error('Hiba történt az adat mentése során:', error);
+            setPopupNavigate('')   
+            setPopupMessage(`Hiba történt az adat mentése során:${error}`)   
+            setPopupConfirmCallback(null)
         }
     };
     
@@ -276,10 +284,18 @@ const AdminUpload = () => {
                     </div>
                 </form>
             </div>
-            <AdminPopupWindows
-                message={popupMessage} 
-                popupNavigate={popupNavigate}
-            />
+            {popupMessage && (
+                  <AdminPopupWindows
+                  message={popupMessage} 
+                  popupNavigate={popupNavigate}
+                  onConfirm={popupConfirmCallback} 
+                  onCancel={() => {
+                    setPopupMessage('');
+                    setPopupNavigate('');
+                    setPopupConfirmCallback(null);
+                  }}
+              />
+            )}
         </div>
     );
 };

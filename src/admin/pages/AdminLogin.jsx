@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
+import AdminPopupWindows from '../popup/AdminPopupWindows';
 
 const AdminLogin = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [popupMessage, setPopupMessage] = useState("");
+    const [popupNavigate, setPopupNavigate] = useState("");
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
     const navigate = useNavigate()
     const {login} = useAuth()
 
@@ -12,7 +16,9 @@ const AdminLogin = () => {
         e.preventDefault();
         
         if (!username || !password) {
-            alert('Kérlek, add meg a felhasználónevet és a jelszót!');
+            setPopupMessage('Kérlek add meg a felhasználó nevet és a jelszót!')
+            setPopupNavigate('')
+            setPopupConfirmCallback(null)
             return;
         }
 
@@ -29,14 +35,19 @@ const AdminLogin = () => {
                 const data = await response.json()
                 sessionStorage.setItem('userId', data._id)
                 login()
-                navigate('/adminmain');
+                setPopupMessage('Sikeres bejelentkezés!')
+                setPopupNavigate('/adminmain')
+                setPopupConfirmCallback(null)
             } else {
                 const message = await response.text();
-                alert(message);
+                setPopupMessage(`Hibás felhasználó név vagy jelszó! ${message}`)
+                setPopupNavigate('')
+                setPopupConfirmCallback(null)
             }
         } catch (error) {
-            console.error('Hiba történt a bejelentkezés során:', error);
-            alert('Hiba történt a bejelentkezés során!');
+            setPopupMessage(`Hiba történt a bejelentkezés során! ${error}` )
+            setPopupNavigate('')
+            setPopupConfirmCallback(null)
         }
     };
 
@@ -90,6 +101,18 @@ const AdminLogin = () => {
                     </div>
                 </form>
             </div>
+            {popupMessage && (
+                <AdminPopupWindows 
+                    message={popupMessage}
+                    popupNavigate={popupNavigate}
+                    onConfirm={popupConfirmCallback} 
+                    onCancel={() => {
+                        setPopupMessage('');
+                        setPopupNavigate('');
+                        setPopupConfirmCallback(null);
+                    }}
+                />
+            )}
         </div>
     );
 }

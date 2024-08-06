@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AdminNavbar from "../components/adminNavbar";
+import AdminPopupWindows from "../popup/AdminPopupWindows";
 
 const AdminOrderingEdit = () => {
     const location = useLocation();
@@ -14,6 +15,9 @@ const AdminOrderingEdit = () => {
     const [country, setCountry] = useState("");
     const [address, setAddress] = useState("");
     const [ordered_data, setOrderData] = useState("");
+    const [popupMessage, setPopupMessage] = useState("");
+    const [popupNavigate, setPopupNavigate] = useState("");
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
 
     useEffect(() => {
         const fetchItem = async () => {
@@ -63,11 +67,13 @@ const AdminOrderingEdit = () => {
             if (!response.ok) {
                 throw new Error("Hiba történt a rendelés frissítése során!");
             }
-            alert("A rendelés sikeresen frissítve!");
-            navigate("/adminordering");
+            setPopupMessage("A rendelés sikeresen frissítve!")
+            setPopupNavigate("/adminordering")
+            setPopupConfirmCallback(null)
         } catch (error) {
-            console.error("Hiba a rendelés frissítése során:", error);
-            alert("Hiba történt a rendelés frissítése során!");
+            popupMessage(`Hiba történt a rendelés frissítése során: ${error}!`)
+            popupNavigate("")
+            setPopupConfirmCallback(null)
         }
     };
 
@@ -210,6 +216,18 @@ const AdminOrderingEdit = () => {
                     </div>
                 </form>
             </div>
+            {popupMessage && (
+                <AdminPopupWindows 
+                    message={popupMessage}
+                    popupNavigate={popupNavigate}
+                    onConfirm={popupConfirmCallback} 
+                    onCancel={() => {
+                    setPopupMessage('');
+                    setPopupNavigate('');
+                    setPopupConfirmCallback(null);
+                    }}
+                />
+            )}
         </div>
     );
 };

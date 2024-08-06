@@ -4,13 +4,17 @@ import AdminNavbar from '../components/adminNavbar';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import AdminMainSidebar from '../components/adminMainSidebar';
+import AdminPopupWindows from '../popup/AdminPopupWindows';
 
 const AdminMainPage = () => {
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedSubCategory, setSelectedSubCategory] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [isDataRefreshed, setIsDataRefreshed] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
+    const [popupNavigate, setPopupNavigate] = useState("");
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,23 +32,32 @@ const AdminMainPage = () => {
         };
 
         fetchData();
-    }, []);
+    }, [isDataRefreshed]);
+
+    const confirmDeleteChange = (id) => {
+        setPopupMessage("Biztos, hogy törlöd a terméket?")
+        setPopupConfirmCallback(() => () => handleDelete(id));
+      }
 
     const handleDelete = async (id) => {
-        if (window.confirm('Biztosan törölni szeretné ezt a terméket?')) {
-            try {
-                const response = await fetch(`http://localhost:3000/api/data/${id}`, {
-                    method: 'DELETE',
-                });
-                if (!response.ok) {
-                    throw new Error('Hiba történt a törlés során!');
-                }
-                setData(data.filter(item => item._id !== id));
-                alert('Termék sikeresen törölve!');
-            } catch (error) {
-                setError(error.message);
+    
+        try {
+            const response = await fetch(`http://localhost:3000/api/data/${id}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error('Hiba történt a törlés során!');
             }
+            setData(data.filter(item => item._id !== id));
+            setIsDataRefreshed((prev) => !prev);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setPopupMessage('');
+            setPopupNavigate('');
+            setPopupConfirmCallback(null);
         }
+
     };
 
     const handleEdit = (id) => {
@@ -53,8 +66,7 @@ const AdminMainPage = () => {
 
     const filteredData = data.filter(item => 
         (!selectedCategory || item.maincategory === selectedCategory) &&
-        (!selectedSubCategory || item.subcategory === selectedSubCategory) &&
-        (item.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        (!selectedSubCategory || item.subcategory === selectedSubCategory)
     );
 
     const columns = [
@@ -71,19 +83,19 @@ const AdminMainPage = () => {
                 />
             ),
         },
-        { field: 'price', headerName: 'Ár', type: 'number', width: 100 }, 
+        { field: 'price', headerName: 'Ár', width: 100 }, 
         { field: 'description', headerName: 'Leírás', width: 250 }, 
         { field: 'maincategory', headerName: 'Fő Kategória', width: 150 }, 
         { field: 'subcategory', headerName: 'Al Kategória', width: 150 }, 
         {
             field: 'actions',
-            headerName: 'Akciók',
+            headerName: '',
             width: 100, 
             renderCell: (params) => (
                 <div className="flex justify-center items-center gap-2 h-full">
                 <button
                     className="py-1 px-2"
-                    onClick={() => handleDelete(params.row.id)}
+                    onClick={() => confirmDeleteChange(params.row.id)}
                 >
                     <FaTrashAlt size={20} />
                 </button>
@@ -117,15 +129,6 @@ const AdminMainPage = () => {
                     onSubCategorySelect={setSelectedSubCategory}
                 />
                 <div className="ml-80 pl-20 pt-20">
-                    <div className="mb-4 flex justify-start items-center">
-                        <input 
-                            type="text"
-                            placeholder="Keresés termék név alapján..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="p-2 border border-gray-300 rounded w-64"
-                        />
-                    </div>
                     {error && <p className="text-red-500">{error}</p>}
                     <div className='h-550 w-1100 fixed'>
                         <DataGrid
@@ -141,6 +144,18 @@ const AdminMainPage = () => {
                     </div>
                 </div>
             </div>
+            {popupMessage && (
+                <AdminPopupWindows 
+                    message={popupMessage}
+                    popupNavigate={popupNavigate}
+                    onConfirm={popupConfirmCallback} 
+                    onCancel={() => {
+                    setPopupMessage('');
+                    setPopupNavigate('');
+                    setPopupConfirmCallback(null);
+                }}
+                />
+            )}
         </div>
     );
 };

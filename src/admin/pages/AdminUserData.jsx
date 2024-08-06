@@ -9,6 +9,7 @@ const AdminUserData = () => {
     const navigate = useNavigate();
     const [popupMessage, setPopupMessage] = useState('')
     const [popupNavigate, setPopupNavigate] = useState('')
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
 
     useEffect(() => {
         const userId = sessionStorage.getItem('userId');
@@ -28,8 +29,13 @@ const AdminUserData = () => {
         fetchData();
     }, []);
 
+    const confirmDeleteChange = (id) => {
+        setPopupMessage("Biztos, hogy törlöd a rengisztrációt?")
+        setPopupNavigate("/adminlogin")
+        setPopupConfirmCallback(() => () => handleDelete(id));
+      }
+
     const handleDelete = async (id) => { 
-        if (window.confirm('Biztosan törölni szeretné a regisztrációt?')) {
             try {
                 const response = await fetch(`http://localhost:3000/api/admin/${id}`, {
                     method: 'DELETE',
@@ -38,12 +44,13 @@ const AdminUserData = () => {
                     throw new Error('Hiba történt a törlés során!');
                 }
                 setData(null);
-                setPopupNavigate('/adminlogin')   
-                setPopupMessage('Regisztráció sikeresen törölve!')  
             } catch (error) {
                 setError(error.message);
+            }finally{
+                setPopupMessage("")
+                setPopupNavigate("")
+                setPopupConfirmCallback(null)
             }
-        }
     };
 
     const handleEdit = (id) => {
@@ -65,7 +72,7 @@ const AdminUserData = () => {
                         <div className="flex gap-4">
                             <button
                                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline"
-                                onClick={() => handleDelete(data._id)}
+                                onClick={() => confirmDeleteChange(data._id)}
                             >
                                 Regisztráció törlése
                             </button>
@@ -81,10 +88,18 @@ const AdminUserData = () => {
                     !error && <p>Adatok betöltése...</p>
                 )}
             </div>
-            <AdminPopupWindows
-                message={popupMessage} 
-                popupNavigate={popupNavigate}
-            />
+            {popupMessage && (
+                  <AdminPopupWindows
+                  message={popupMessage} 
+                  popupNavigate={popupNavigate}
+                  onConfirm={popupConfirmCallback} 
+                  onCancel={() => {
+                    setPopupMessage('');
+                    setPopupNavigate('');
+                    setPopupConfirmCallback(null);
+                  }}
+              />
+            )}
         </div>
     );
 }

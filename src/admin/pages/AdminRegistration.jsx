@@ -12,6 +12,7 @@ const AdminRegistration = () => {
     const [itemId, setItemId] = useState(null)
     const [popupMessage, setPopupMessage] = useState('')
     const [popupNavigate, setPopupNavigate] = useState('')
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
     const navigate = useNavigate();
     const location = useLocation()
 
@@ -21,16 +22,16 @@ const AdminRegistration = () => {
         if (password !== confirmPassword) {
             setPopupMessage('A jelszavak nem egyeznek.')
             setPopupNavigate('')
+            setPopupConfirmCallback(null)
             return;
         }
 
         try {
             await saveData();
-            setPopupMessage('Sikeres regisztráció!')
-            setPopupNavigate('/adminlogin')
         } catch (error) {
             setPopupMessage(`Hiba történt az adat mentése során!, ${error}`)
             setPopupNavigate('')
+            setPopupConfirmCallback(null)
         }
     };
 
@@ -54,6 +55,9 @@ const AdminRegistration = () => {
         if (!response.ok) {
             throw new Error('Hiba történt az adat mentése során!');
         }
+        setPopupMessage('Sikeres regisztráció!')
+        setPopupNavigate('/adminlogin')
+        setPopupConfirmCallback(null)
     };
 
     const handleBack = () => {
@@ -76,19 +80,12 @@ const AdminRegistration = () => {
                 } catch (error) {
                     setPopupMessage(`Hiba történt az adatok lekérdezése során!, ${error}`)
                     setPopupNavigate('');
+                    setPopupConfirmCallback(null)
                 }
             };
             fetchItem();
         }
     }, [location.state]);
-
-    useEffect(() => {
-        if (popupNavigate) {
-            navigate(popupNavigate);
-            setPopupMessage('');
-            setPopupNavigate('');
-        }
-    }, [popupNavigate, navigate]);
 
     return (
         <div>
@@ -178,10 +175,18 @@ const AdminRegistration = () => {
                         </div>
                     </form>
                 </div>
-                <AdminPopupWindows
-                message={popupMessage} 
-                popupNavigate={popupNavigate}
-            />
+                {popupMessage && (
+                    <AdminPopupWindows
+                    message={popupMessage} 
+                    popupNavigate={popupNavigate} 
+                    onConfirm={popupConfirmCallback} 
+                    onCancel={() => {
+                      setPopupMessage('');
+                      setPopupNavigate('');
+                      setPopupConfirmCallback(null);
+                    }} 
+                    />
+                )}
         </div>
     );
 }

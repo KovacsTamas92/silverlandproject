@@ -5,10 +5,6 @@ const AdminPopupWindows = ({ message, popupNavigate, onConfirm, onCancel }) => {
   const navigate = useNavigate();
   const [showUpPopup, setShowUpPopUp] = useState(true);
 
-  if (!message) {
-    return null;
-  }
-
   const handleConfirm = () => {
     if (onConfirm) {
       onConfirm();
@@ -43,12 +39,14 @@ const AdminPopupWindows = ({ message, popupNavigate, onConfirm, onCancel }) => {
               >
                 Rendben
               </button>
-              <button
-                onClick={handleCancel}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
-              >
-                Mégse
-              </button>
+              {onConfirm && (
+                 <button
+                 onClick={handleCancel}
+                 className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+               >
+                 Mégse
+               </button>
+              )}
             </div>
           </div>
         </div>

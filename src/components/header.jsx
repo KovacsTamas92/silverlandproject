@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import User from "../images/user.svg";
-import Basket from "../images/basket.png";
+import CartIcon from "./cart";
 
 function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -27,13 +27,7 @@ function Header() {
       <div className="flex justify-end">
         <ul className="flex space-x-4">
           <li>
-            <Link to="/" className="text-white text-sm" aria-current="page">
-              <img
-                src={Basket}
-                alt="Basket"
-                className="w-8 h-8 rounded-full cursor-pointer"
-              />
-            </Link>
+            <CartIcon />
           </li>
           <li className="relative">
             <button

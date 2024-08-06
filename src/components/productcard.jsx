@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useCart } from "./cartcontext";
 
 function ProductCard() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
+  const { addItemToCart } = useCart();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,11 +60,15 @@ function ProductCard() {
           <h2 className="text-2xl font-bold mb-4">{product.price} Ft</h2>
 
           <div className="flex flex-col mt-4">
-            <button className="bg-black text-white font-bold py-2 px-4 rounded mb-2">
+            <button
+              className="bg-black text-white font-bold py-2 px-4 rounded mb-2"
+              onClick={() => addItemToCart(product)}
+            >
               Kosárba
             </button>
+
             <Link
-              to="/description"
+              to={`/description/${product.id}`}
               className="underline text-black hover:text-blue-600 font-bold py-2 px-4"
             >
               Részletek

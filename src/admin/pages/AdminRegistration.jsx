@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminNavbar from '../components/adminNavbar';
-import AdminPopupWindows from '../popup/AdminPopupWindows';
+import AdminPopupWindows from './AdminPopupWindows';
 
 const AdminRegistration = () => {
     const [username, setUsername] = useState('');

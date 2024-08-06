@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminNavbar from '../components/adminNavbar';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AdminPopupWindows from '../popup/AdminPopupWindows';
+import AdminPopupWindows from './AdminPopupWindows';
 
 const AdminUpload = () => {
     const mainCategories = [

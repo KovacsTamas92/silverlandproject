@@ -4,7 +4,7 @@ import AdminNavbar from '../components/adminNavbar';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import AdminMainSidebar from '../components/adminMainSidebar';
-import AdminPopupWindows from '../popup/AdminPopupWindows';
+import AdminPopupWindows from './AdminPopupWindows';
 
 const AdminMainPage = () => {
     const [data, setData] = useState([]);

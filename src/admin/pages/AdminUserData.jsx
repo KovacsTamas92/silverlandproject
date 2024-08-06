@@ -1,7 +1,7 @@
 import AdminNavbar from '../components/adminNavbar';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminPopupWindows from '../popup/AdminPopupWindows';
+import AdminPopupWindows from './AdminPopupWindows';
 
 const AdminUserData = () => {
     const [data, setData] = useState();

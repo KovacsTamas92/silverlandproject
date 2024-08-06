@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { FaTrashAlt, FaBackward, FaEdit, FaCheck } from "react-icons/fa";
 import AdminOrderSidebar from "../components/adminOrderSidebar";
 import { useNavigate } from "react-router-dom";
-import AdminPopupWindows from "../popup/AdminPopupWindows";
+import AdminPopupWindows from "./AdminPopupWindows";
 
 const AdminOrderingPage = () => {
   const [data, setData] = useState([]);

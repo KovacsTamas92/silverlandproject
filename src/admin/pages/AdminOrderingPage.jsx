@@ -125,8 +125,8 @@ const AdminOrderingPage = () => {
     { field: "ordered_data", headerName: "Termékek", width: 100 },
     { field: "price", headerName: "Ár(Ft)", type: "number", width: 80 },
     {
-      field: "",
-      headerName: "Action",
+      field: "Action",
+      headerName: "",
       width: 120,
       renderCell: (params) => (
         <div className="flex justify-center items-center gap-2 h-full">

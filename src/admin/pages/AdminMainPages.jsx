@@ -14,7 +14,7 @@ const AdminMainPage = () => {
     const [isDataRefreshed, setIsDataRefreshed] = useState(false);
     const [popupMessage, setPopupMessage] = useState("");
     const [popupNavigate, setPopupNavigate] = useState("");
-    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
     const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
     const navigate = useNavigate();
 
@@ -57,7 +57,7 @@ const AdminMainPage = () => {
         } finally {
             setPopupMessage('');
             setPopupNavigate('');
-            setPopupConfirmCallback(null);
+            setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")));
             setPopupWindowCancelButtonPreview(false)
         }
 
@@ -155,7 +155,7 @@ const AdminMainPage = () => {
                     onCancel={() => {
                         setPopupMessage('');
                         setPopupNavigate('');
-                        setPopupConfirmCallback(null);
+                        setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")));
                     }}
                     popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
                 />

@@ -9,7 +9,7 @@ const AdminUserData = () => {
     const navigate = useNavigate();
     const [popupMessage, setPopupMessage] = useState('')
     const [popupNavigate, setPopupNavigate] = useState('')
-    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
     const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
 
 
@@ -49,11 +49,6 @@ const AdminUserData = () => {
                 setData(null);
             } catch (error) {
                 setError(error.message);
-            }finally{
-                setPopupMessage("")
-                setPopupNavigate("")
-                setPopupConfirmCallback(null)
-                setPopupWindowCancelButtonPreview(true)
             }
     };
 
@@ -100,8 +95,9 @@ const AdminUserData = () => {
                   onCancel={() => {
                     setPopupMessage('');
                     setPopupNavigate('');
-                    setPopupConfirmCallback(null);
+                    setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")));
                   }}
+                  popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
               />
             )}
         </div>

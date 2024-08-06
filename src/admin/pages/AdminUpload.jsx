@@ -168,7 +168,7 @@ const AdminUpload = () => {
     const [itemId, setItemId] = useState(null); 
     const [popupMessage, setPopupMessage] = useState('')
     const [popupNavigate, setPopupNavigate] = useState('')
-    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null);
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
     const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
  
 
@@ -190,11 +190,8 @@ const AdminUpload = () => {
                     setDescription(item.description);
                     setFilePreview(item.file);
                 } catch (error) {
-                    console.error('Hiba a termék adatainak betöltése során:', error);
-                    setPopupNavigate('')   
+                    console.error('Hiba a termék adatainak betöltése során:', error);  
                     setPopupMessage(`Hiba történt az adatainak betöltése során:${error}`)   
-                    setPopupConfirmCallback(null)
-                    setPopupWindowCancelButtonPreview(false)
                 }
             };
             fetchItem();
@@ -218,9 +215,6 @@ const AdminUpload = () => {
     
         if (!selectedMainCategory || !selectedSubCategory || !name || !price || !description) {
             setPopupMessage('Minden mezőt ki kell tölteni!')
-            setPopupNavigate("")
-            setPopupConfirmCallback(null)
-            setPopupWindowCancelButtonPreview(false)
             return;
         }
     
@@ -260,14 +254,9 @@ const AdminUpload = () => {
                 throw new Error('Hiba történt az adat mentése során!');
             }
             setPopupNavigate('/adminmain')   
-            setPopupMessage('Termék sikeresen mentve!')   
-            setPopupConfirmCallback(null)
-            setPopupWindowCancelButtonPreview(false)
-        } catch (error) {
-            setPopupNavigate('')   
-            setPopupMessage(`Hiba történt az adat mentése során:${error}`)   
-            setPopupConfirmCallback(null)
-            setPopupWindowCancelButtonPreview(false)
+            setPopupMessage('Termék sikeresen mentve!')  
+        } catch (error) {  
+            setPopupMessage(`Hiba történt az adat mentése során:${error}`)  
         }
     };
     
@@ -394,7 +383,7 @@ const AdminUpload = () => {
                   onCancel={() => {
                     setPopupMessage('');
                     setPopupNavigate('');
-                    setPopupConfirmCallback(null);
+                    setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")));
                   }}
                   popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
               />

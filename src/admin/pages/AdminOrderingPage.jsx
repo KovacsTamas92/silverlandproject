@@ -13,7 +13,7 @@ const AdminOrderingPage = () => {
   const [isDataRefreshed, setIsDataRefreshed] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [popupNavigate, setPopupNavigate] = useState("");
-  const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+  const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
   const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
   const navigate = useNavigate();
 
@@ -55,7 +55,7 @@ const AdminOrderingPage = () => {
     }
     setPopupConfirmCallback(() => () => handleActive(id, isActive));
   };
-
+ 
   const confirmDeleteChange = (id) => {
     setPopupMessage("Biztos, hogy törlöd a rendelést?")
     setPopupWindowCancelButtonPreview(true)
@@ -78,11 +78,11 @@ const AdminOrderingPage = () => {
       setIsDataRefreshed((prev) => !prev);
     } catch (error) {
       console.error("Hiba történt az adat mentése során:", error);
+      setPopupMessage(`${error}`)
     } finally {
-      setPopupMessage('');
-      setPopupNavigate('');
-      setPopupConfirmCallback(null);
-      setPopupWindowCancelButtonPreview(false)
+      setPopupMessage('')
+      setPopupMessage('')
+      setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
     }
   };
 
@@ -103,10 +103,9 @@ const AdminOrderingPage = () => {
       } catch (error) {
         setError(error.message);
       } finally {
-        setPopupMessage('');
-        setPopupNavigate('');
-        setPopupConfirmCallback(null);
-        setPopupWindowCancelButtonPreview(false)
+        setPopupMessage('')
+        setPopupMessage('')
+        setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
       }
   };
 
@@ -196,7 +195,7 @@ const AdminOrderingPage = () => {
           onCancel={() => {
             setPopupMessage('');
             setPopupNavigate('');
-            setPopupConfirmCallback(null);
+            setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
           }}
           popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
         />

@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import AdminPopupWindows from './AdminPopupWindows';
+
 const AdminLogin = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [popupMessage, setPopupMessage] = useState("");
     const [popupNavigate, setPopupNavigate] = useState("");
-    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
     const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
     const navigate = useNavigate()
     const {login} = useAuth()
@@ -17,9 +18,6 @@ const AdminLogin = () => {
         
         if (!username || !password) {
             setPopupMessage('Kérlek add meg a felhasználó nevet és a jelszót!')
-            setPopupNavigate('')
-            setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
-            setPopupWindowCancelButtonPreview(false)
             return;
         }
 
@@ -38,20 +36,12 @@ const AdminLogin = () => {
                 login()
                 setPopupMessage('Sikeres bejelentkezés!')
                 setPopupNavigate('/adminmain')
-                setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
-                setPopupWindowCancelButtonPreview(false)
             } else {
                 const message = await response.text();
                 setPopupMessage(`${message}`)
-                setPopupNavigate('')
-                setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
-                setPopupWindowCancelButtonPreview(false)
             }
         } catch (error) {
             setPopupMessage(`${error}` )
-            setPopupNavigate('')
-            setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
-            setPopupWindowCancelButtonPreview(false)
         }
     };
 
@@ -113,7 +103,7 @@ const AdminLogin = () => {
                     onCancel={() => {
                         setPopupMessage('');
                         setPopupNavigate('');
-                        setPopupConfirmCallback(null);
+                        setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")));
                     }}
                     popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
                 />

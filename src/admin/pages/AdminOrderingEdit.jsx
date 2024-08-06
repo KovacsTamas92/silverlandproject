@@ -17,7 +17,7 @@ const AdminOrderingEdit = () => {
     const [ordered_data, setOrderData] = useState("");
     const [popupMessage, setPopupMessage] = useState("");
     const [popupNavigate, setPopupNavigate] = useState("");
-    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
     const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
 
     useEffect(() => {
@@ -70,13 +70,8 @@ const AdminOrderingEdit = () => {
             }
             setPopupMessage("A rendelés sikeresen frissítve!")
             setPopupNavigate("/adminordering")
-            setPopupConfirmCallback(null)
-            setPopupWindowCancelButtonPreview(false)
         } catch (error) {
-            popupMessage(`Hiba történt a rendelés frissítése során: ${error}!`)
-            popupNavigate("")
-            setPopupConfirmCallback(null)
-            setPopupWindowCancelButtonPreview(false)
+            setPopupMessage(`Hiba történt a rendelés frissítése során: ${error}!`)
         }
     };
 
@@ -227,7 +222,7 @@ const AdminOrderingEdit = () => {
                     onCancel={() => {
                         setPopupMessage('');
                         setPopupNavigate('');
-                        setPopupConfirmCallback(null);
+                        setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")));
                     }}
                     popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
                 />

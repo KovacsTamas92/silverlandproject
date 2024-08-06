@@ -10,9 +10,10 @@ const AdminRegistration = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [masterKey, setMasterKey] = useState('');
     const [itemId, setItemId] = useState(null)
+    const [adminNames, setAdminNames] = useState([])
     const [popupMessage, setPopupMessage] = useState('')
     const [popupNavigate, setPopupNavigate] = useState('')
-    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
     const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
     const navigate = useNavigate();
     const location = useLocation()
@@ -20,21 +21,22 @@ const AdminRegistration = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
 
+        const matchingUsernames = adminNames.filter((adminName) => adminName === username);
+
+        if (matchingUsernames.length > 0) {
+            setPopupMessage('Ez a felhasználónév már foglalt.');
+            return;
+        }
+
         if (password !== confirmPassword) {
             setPopupMessage('A jelszavak nem egyeznek.')
-            setPopupNavigate('')
-            setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
-            setPopupWindowCancelButtonPreview(false)
             return;
         }
 
         try {
             await saveData();
         } catch (error) {
-            setPopupMessage(`Hiba történt az adat mentése során!, ${error}`)
-            setPopupNavigate('')
-            setPopupConfirmCallback(null)
-            setPopupWindowCancelButtonPreview(false)
+            setPopupMessage(`${error}`)
         }
     };
 
@@ -60,13 +62,28 @@ const AdminRegistration = () => {
         }
         setPopupMessage('Sikeres regisztráció!')
         setPopupNavigate('/adminlogin')
-        setPopupConfirmCallback(null)
-        setPopupWindowCancelButtonPreview(false)
     };
 
     const handleBack = () => {
         {itemId ? navigate('/adminmain') : navigate('/adminlogin');}
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await fetch("http://localhost:3000/api/admin");
+            if (!response.ok) {
+              throw new Error("Hiba történt az admin adatok lekérdezésekor!");
+            }
+            const result = await response.json();
+            setAdminNames(result.map(admin => admin.username))
+          } catch (error) {
+            setPopupMessage(`${error}`)
+          }
+        };
+    
+        fetchData();
+      }, []);
 
     useEffect(() => {
         if (location.state && location.state.id) {
@@ -82,10 +99,7 @@ const AdminRegistration = () => {
                     setUsername(item.username);
                     setEmail(item.email)
                 } catch (error) {
-                    setPopupMessage(`Hiba történt az adatok lekérdezése során!, ${error}`)
-                    setPopupNavigate('');
-                    setPopupConfirmCallback(null)
-                    setPopupWindowCancelButtonPreview(false)
+                    setPopupMessage(`${error}`)
                 }
             };
             fetchItem();
@@ -188,7 +202,7 @@ const AdminRegistration = () => {
                     onCancel={() => {
                       setPopupMessage('');
                       setPopupNavigate('');
-                      setPopupConfirmCallback(null);
+                      setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")));
                     }} 
                     popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
                     />

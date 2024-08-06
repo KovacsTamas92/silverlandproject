@@ -169,6 +169,18 @@ app.post('/api/adminlogin', async (req, res) => {
   }
 });
 
+// Adminok adatai lekérdezése
+app.get('/api/admin', (req, res) => {
+  AdminModel.find({})
+      .then((data) => {
+          console.log('Az adminok lekérdezése sikeres volt!');
+          res.send(data);
+      })
+      .catch((err) => {
+          console.log('Hiba az adminok lekérdezésekor:', err);
+          res.status(500).send('Hiba az adminok lekérdezésekor!');
+      });
+});
 
 // Admin adatok lekérdezése ID alapján
 app.get('/api/admin/:id', (req, res) => {

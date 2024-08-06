@@ -13,6 +13,7 @@ const AdminRegistration = () => {
     const [popupMessage, setPopupMessage] = useState('')
     const [popupNavigate, setPopupNavigate] = useState('')
     const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+    const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
     const navigate = useNavigate();
     const location = useLocation()
 
@@ -22,7 +23,8 @@ const AdminRegistration = () => {
         if (password !== confirmPassword) {
             setPopupMessage('A jelszavak nem egyeznek.')
             setPopupNavigate('')
-            setPopupConfirmCallback(null)
+            setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
+            setPopupWindowCancelButtonPreview(false)
             return;
         }
 
@@ -32,6 +34,7 @@ const AdminRegistration = () => {
             setPopupMessage(`Hiba történt az adat mentése során!, ${error}`)
             setPopupNavigate('')
             setPopupConfirmCallback(null)
+            setPopupWindowCancelButtonPreview(false)
         }
     };
 
@@ -58,6 +61,7 @@ const AdminRegistration = () => {
         setPopupMessage('Sikeres regisztráció!')
         setPopupNavigate('/adminlogin')
         setPopupConfirmCallback(null)
+        setPopupWindowCancelButtonPreview(false)
     };
 
     const handleBack = () => {
@@ -81,6 +85,7 @@ const AdminRegistration = () => {
                     setPopupMessage(`Hiba történt az adatok lekérdezése során!, ${error}`)
                     setPopupNavigate('');
                     setPopupConfirmCallback(null)
+                    setPopupWindowCancelButtonPreview(false)
                 }
             };
             fetchItem();
@@ -185,6 +190,7 @@ const AdminRegistration = () => {
                       setPopupNavigate('');
                       setPopupConfirmCallback(null);
                     }} 
+                    popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
                     />
                 )}
         </div>

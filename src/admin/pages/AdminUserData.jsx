@@ -10,6 +10,8 @@ const AdminUserData = () => {
     const [popupMessage, setPopupMessage] = useState('')
     const [popupNavigate, setPopupNavigate] = useState('')
     const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+    const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
+
 
     useEffect(() => {
         const userId = sessionStorage.getItem('userId');
@@ -33,6 +35,7 @@ const AdminUserData = () => {
         setPopupMessage("Biztos, hogy törlöd a rengisztrációt?")
         setPopupNavigate("/adminlogin")
         setPopupConfirmCallback(() => () => handleDelete(id));
+        setPopupWindowCancelButtonPreview(true)
       }
 
     const handleDelete = async (id) => { 
@@ -50,6 +53,7 @@ const AdminUserData = () => {
                 setPopupMessage("")
                 setPopupNavigate("")
                 setPopupConfirmCallback(null)
+                setPopupWindowCancelButtonPreview(true)
             }
     };
 

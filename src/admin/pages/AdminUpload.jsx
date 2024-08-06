@@ -72,7 +72,9 @@ const AdminUpload = () => {
     const [itemId, setItemId] = useState(null); 
     const [popupMessage, setPopupMessage] = useState('')
     const [popupNavigate, setPopupNavigate] = useState('')
-    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(null);
+    const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
+ 
 
     useEffect(() => {
         if (location.state && location.state.id) {
@@ -96,6 +98,7 @@ const AdminUpload = () => {
                     setPopupNavigate('')   
                     setPopupMessage(`Hiba történt az adatainak betöltése során:${error}`)   
                     setPopupConfirmCallback(null)
+                    setPopupWindowCancelButtonPreview(false)
                 }
             };
             fetchItem();
@@ -121,6 +124,7 @@ const AdminUpload = () => {
             setPopupMessage('Minden mezőt ki kell tölteni!')
             setPopupNavigate("")
             setPopupConfirmCallback(null)
+            setPopupWindowCancelButtonPreview(false)
             return;
         }
     
@@ -162,10 +166,12 @@ const AdminUpload = () => {
             setPopupNavigate('/adminmain')   
             setPopupMessage('Termék sikeresen mentve!')   
             setPopupConfirmCallback(null)
+            setPopupWindowCancelButtonPreview(false)
         } catch (error) {
             setPopupNavigate('')   
             setPopupMessage(`Hiba történt az adat mentése során:${error}`)   
             setPopupConfirmCallback(null)
+            setPopupWindowCancelButtonPreview(false)
         }
     };
     
@@ -294,6 +300,7 @@ const AdminUpload = () => {
                     setPopupNavigate('');
                     setPopupConfirmCallback(null);
                   }}
+                  popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
               />
             )}
         </div>

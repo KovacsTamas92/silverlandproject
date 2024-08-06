@@ -14,6 +14,7 @@ const AdminOrderingPage = () => {
   const [popupMessage, setPopupMessage] = useState("");
   const [popupNavigate, setPopupNavigate] = useState("");
   const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+  const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,14 +48,17 @@ const AdminOrderingPage = () => {
     if (orderStatus === "completed") {
       isActive = true;
       setPopupMessage("Biztos, hogy újra aktiválod a rendelést?");
+      setPopupWindowCancelButtonPreview(true)
     } else {
       setPopupMessage("Biztos lezárod a rendelést?");
+      setPopupWindowCancelButtonPreview(true)
     }
     setPopupConfirmCallback(() => () => handleActive(id, isActive));
   };
 
   const confirmDeleteChange = (id) => {
     setPopupMessage("Biztos, hogy törlöd a rendelést?")
+    setPopupWindowCancelButtonPreview(true)
     setPopupConfirmCallback(() => () => handleDelete(id));
   }
 
@@ -78,6 +82,7 @@ const AdminOrderingPage = () => {
       setPopupMessage('');
       setPopupNavigate('');
       setPopupConfirmCallback(null);
+      setPopupWindowCancelButtonPreview(false)
     }
   };
 
@@ -101,6 +106,7 @@ const AdminOrderingPage = () => {
         setPopupMessage('');
         setPopupNavigate('');
         setPopupConfirmCallback(null);
+        setPopupWindowCancelButtonPreview(false)
       }
   };
 
@@ -192,6 +198,7 @@ const AdminOrderingPage = () => {
             setPopupNavigate('');
             setPopupConfirmCallback(null);
           }}
+          popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
         />
       )}
     </div>

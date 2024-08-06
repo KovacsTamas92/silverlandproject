@@ -8,6 +8,7 @@ const AdminLogin = () => {
     const [popupMessage, setPopupMessage] = useState("");
     const [popupNavigate, setPopupNavigate] = useState("");
     const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+    const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
     const navigate = useNavigate()
     const {login} = useAuth()
 
@@ -18,6 +19,7 @@ const AdminLogin = () => {
             setPopupMessage('Kérlek add meg a felhasználó nevet és a jelszót!')
             setPopupNavigate('')
             setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
+            setPopupWindowCancelButtonPreview(false)
             return;
         }
 
@@ -37,16 +39,19 @@ const AdminLogin = () => {
                 setPopupMessage('Sikeres bejelentkezés!')
                 setPopupNavigate('/adminmain')
                 setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
+                setPopupWindowCancelButtonPreview(false)
             } else {
                 const message = await response.text();
                 setPopupMessage(`${message}`)
                 setPopupNavigate('')
                 setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
+                setPopupWindowCancelButtonPreview(false)
             }
         } catch (error) {
             setPopupMessage(`${error}` )
             setPopupNavigate('')
             setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
+            setPopupWindowCancelButtonPreview(false)
         }
     };
 
@@ -110,6 +115,7 @@ const AdminLogin = () => {
                         setPopupNavigate('');
                         setPopupConfirmCallback(null);
                     }}
+                    popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
                 />
             )}
         </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AdminPopupWindows = ({ message, popupNavigate, onConfirm, onCancel }) => {
+const AdminPopupWindows = ({ message, popupNavigate, onConfirm, onCancel, popupWindowCancelButtonPreview }) => {
   const navigate = useNavigate();
   const [showUpPopup, setShowUpPopUp] = useState(true);
 
@@ -39,7 +39,7 @@ const AdminPopupWindows = ({ message, popupNavigate, onConfirm, onCancel }) => {
               >
                 Rendben
               </button>
-              {onConfirm && (
+              {popupWindowCancelButtonPreview && (
                  <button
                  onClick={handleCancel}
                  className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"

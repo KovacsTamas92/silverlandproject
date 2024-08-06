@@ -15,6 +15,7 @@ const AdminMainPage = () => {
     const [popupMessage, setPopupMessage] = useState("");
     const [popupNavigate, setPopupNavigate] = useState("");
     const [popupConfirmCallback, setPopupConfirmCallback] = useState(null); 
+    const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,6 +38,7 @@ const AdminMainPage = () => {
     const confirmDeleteChange = (id) => {
         setPopupMessage("Biztos, hogy törlöd a terméket?")
         setPopupConfirmCallback(() => () => handleDelete(id));
+        setPopupWindowCancelButtonPreview(true)
       }
 
     const handleDelete = async (id) => {
@@ -56,6 +58,7 @@ const AdminMainPage = () => {
             setPopupMessage('');
             setPopupNavigate('');
             setPopupConfirmCallback(null);
+            setPopupWindowCancelButtonPreview(false)
         }
 
     };
@@ -150,10 +153,11 @@ const AdminMainPage = () => {
                     popupNavigate={popupNavigate}
                     onConfirm={popupConfirmCallback} 
                     onCancel={() => {
-                    setPopupMessage('');
-                    setPopupNavigate('');
-                    setPopupConfirmCallback(null);
-                }}
+                        setPopupMessage('');
+                        setPopupNavigate('');
+                        setPopupConfirmCallback(null);
+                    }}
+                    popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
                 />
             )}
         </div>

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
 import NavBar from "../components/navbar";
 import SideBar from "../components/sidebar";
 import Logo from "../images/logo.gif";
@@ -12,52 +11,53 @@ function UserRegister() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [trackingName, setTrackingName] = useState("");
+  const [phone_number, setPhoneNumber] = useState(0);
+  const [tracking_name, setTrackingName] = useState("");
   const [country, setCountry] = useState("");
-  const [zipCode, setZipCode] = useState("");
+  const [zip_code, setZipCode] = useState(0);
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
   const navigate = useNavigate();
-  const { register } = useAuth();
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    const phone = Number(phone_number);
+    const zip = Number(zip_code);
     if (password !== confirmPassword) {
       alert("A jelszavak nem egyeznek!");
       return;
     }
+    const userdata = {
+      name,
+      username,
+      password,
+      email,
+      phone_number: phone,
+      tracking_name,
+      country,
+      zip_code: zip,
+      city,
+      address,
+    };
 
     try {
-      const response = await fetch("http://localhost:3000/api/userregister", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          username,
-          password,
-          email,
-          phoneNumber,
-          trackingName,
-          country,
-          zipCode,
-          city,
-          address,
-        }),
-      });
+      console.log(userdata);
+      const response = await fetch(
+        "http://localhost:3000/api/userregistration",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userdata),
+        }
+      );
 
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("userId", data._id);
-        register();
-        navigate("/");
-      } else {
-        const message = await response.text();
-        alert(message);
+      if (!response.ok) {
+        throw new Error("Hiba történt az adat mentése során!");
       }
+      navigate("/");
     } catch (error) {
       console.error("Hiba történt a regisztráció során:", error);
       alert("Hiba történt a regisztráció során!");
@@ -117,7 +117,7 @@ function UserRegister() {
           />
           <input
             onChange={(e) => setPhoneNumber(e.target.value)}
-            type="text"
+            type="number"
             className="border border-gray-300 p-2 mb-4 w-full rounded-md"
             placeholder="Telefon"
           />
@@ -138,7 +138,7 @@ function UserRegister() {
           />
           <input
             onChange={(e) => setZipCode(e.target.value)}
-            type="text"
+            type="number"
             className="border border-gray-300 p-2 mb-4 w-full rounded-md"
             placeholder="Irányítószám"
           />

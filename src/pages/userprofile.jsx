@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
 import NavBar from "../components/navbar";
 import SideBar from "../components/sidebar";
 import Logo from "../images/logo.gif";
@@ -10,63 +9,65 @@ function UserProfile() {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [trackingName, setTrackingName] = useState("");
+  const [phone_number, setPhoneNumber] = useState("");
+  const [tracking_name, setTrackingName] = useState("");
   const [country, setCountry] = useState("");
-  const [zipCode, setZipCode] = useState("");
+  const [zip_code, setZipCode] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      setName(user.name || "");
-      setUsername(user.username || "");
-      setEmail(user.email || "");
-      setPhoneNumber(user.phoneNumber || "");
-      setTrackingName(user.trackingName || "");
-      setCountry(user.country || "");
-      setZipCode(user.zipCode || "");
-      setCity(user.city || "");
-      setAddress(user.address || "");
-      setLoading(false);
-    } else {
-      const fetchData = async () => {
-        try {
-          const response = await fetch("http://localhost:3000/api/userprofile");
-          if (response.ok) {
-            const data = await response.json();
-            setName(data.name);
-            setUsername(data.username);
-            setEmail(data.email);
-            setPhoneNumber(data.phoneNumber);
-            setTrackingName(data.trackingName);
-            setCountry(data.country);
-            setZipCode(data.zipCode);
-            setCity(data.city);
-            setAddress(data.address);
-          } else {
-            throw new Error("Hiba történt az adatok betöltése során.");
-          }
-        } catch (error) {
-          console.error("Hiba történt az adatok betöltése során:", error);
-          alert("Hiba történt az adatok betöltése során!");
-        } finally {
-          setLoading(false);
-        }
-      };
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        navigate("/userlogin");
+        return;
+      }
 
-      fetchData();
-    }
-  }, [user]);
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/user/${userId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setName(data.name);
+          setUsername(data.username);
+          setEmail(data.email);
+          setPhoneNumber(data.phone_number);
+          setTrackingName(data.tracking_name);
+          setCountry(data.country);
+          setZipCode(data.zip_code);
+          setCity(data.city);
+          setPassword(data.password);
+          setAddress(data.address);
+        } else {
+          throw new Error("Hiba történt az adatok betöltése során.");
+        }
+      } catch (error) {
+        console.error("Hiba történt az adatok betöltése során:", error);
+        alert("Hiba történt az adatok betöltése során!");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
 
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      navigate("/userlogin");
+      return;
+    }
+
     try {
-      const response = await fetch("http://localhost:3000/api/updateprofile", {
+      const response = await fetch(`http://localhost:3000/api/user/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -75,17 +76,18 @@ function UserProfile() {
           name,
           username,
           email,
-          phoneNumber,
-          trackingName,
+          phone_number,
+          password,
+          tracking_name,
           country,
-          zipCode,
+          zip_code,
           city,
           address,
         }),
       });
 
       if (response.ok) {
-        const data = await response.json();
+        /* const data = await response.json(); */
         alert("Profil sikeresen frissítve!");
         navigate("/");
       } else {
@@ -151,7 +153,7 @@ function UserProfile() {
             placeholder="Email"
           />
           <input
-            value={phoneNumber}
+            value={phone_number}
             onChange={(e) => setPhoneNumber(e.target.value)}
             type="text"
             className="border border-gray-300 p-2 mb-4 w-full rounded-md"
@@ -161,7 +163,7 @@ function UserProfile() {
             Szállítási adatok
           </h2>
           <input
-            value={trackingName}
+            value={tracking_name}
             onChange={(e) => setTrackingName(e.target.value)}
             type="text"
             className="border border-gray-300 p-2 mb-4 w-full rounded-md"
@@ -175,7 +177,7 @@ function UserProfile() {
             placeholder="Ország"
           />
           <input
-            value={zipCode}
+            value={zip_code}
             onChange={(e) => setZipCode(e.target.value)}
             type="text"
             className="border border-gray-300 p-2 mb-4 w-full rounded-md"
@@ -194,6 +196,13 @@ function UserProfile() {
             type="text"
             className="border border-gray-300 p-2 mb-4 w-full rounded-md"
             placeholder="Cím"
+          />
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="text"
+            className="border border-gray-300 p-2 mb-4 w-full rounded-md"
+            placeholder="Password"
           />
           <button
             className="bg-black text-white font-bold py-2 px-4 rounded-md w-full mt-4"

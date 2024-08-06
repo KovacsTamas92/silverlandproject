@@ -39,12 +39,12 @@ const AdminLogin = () => {
                 setPopupConfirmCallback(null)
             } else {
                 const message = await response.text();
-                setPopupMessage(`Hibás felhasználó név vagy jelszó! ${message}`)
+                setPopupMessage(`${message}`)
                 setPopupNavigate('')
                 setPopupConfirmCallback(null)
             }
         } catch (error) {
-            setPopupMessage(`Hiba történt a bejelentkezés során! ${error}` )
+            setPopupMessage(`${error}` )
             setPopupNavigate('')
             setPopupConfirmCallback(null)
         }
@@ -53,6 +53,11 @@ const AdminLogin = () => {
     const navigateToRegistration = () => {
         navigate('/adminregistration')
     }
+
+    const handlePopupConfirm = () => {
+        setPopupMessage('');
+        setPopupNavigate('');
+    }; 
 
     return (
         <div>
@@ -104,7 +109,7 @@ const AdminLogin = () => {
                 <AdminPopupWindows 
                     message={popupMessage}
                     popupNavigate={popupNavigate}
-                    onConfirm={popupConfirmCallback} 
+                    onConfirm={handlePopupConfirm} 
                     onCancel={() => {
                         setPopupMessage('');
                         setPopupNavigate('');

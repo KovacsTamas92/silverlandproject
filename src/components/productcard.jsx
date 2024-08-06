@@ -38,9 +38,9 @@ function ProductCard() {
           key={product.id}
           className="border border-gray-200 shadow-2xl rounded-md p-4 m-4 text-center w-60"
         >
-          {product.image ? (
+          {product.file ? (
             <img
-              src={product.image}
+              src={product.file}
               alt={product.name}
               className="mx-auto h-40 object-contain"
               onError={(e) => {

@@ -29,7 +29,7 @@ const AdminPopupWindows = ({ message, popupNavigate, onConfirm, onCancel }) => {
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm mx-4 sm:mx-8">
             <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800">
-              Rendszer üzenet:
+              Rendszerüzenet:
             </h2>
             <p className="text-lg text-gray-700 mb-4 text-center">{message}</p>
             <div className="flex justify-center gap-4">

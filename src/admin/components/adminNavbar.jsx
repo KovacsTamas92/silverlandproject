@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../auth/AuthContext';
 import { FaUser } from 'react-icons/fa';
 import AdminPopupWindows from '../pages/AdminPopupWindows';
+import AdminHeadSidebar from './adminHeadSidebar';
 
 function AdminNavbar() {
 
@@ -10,18 +10,18 @@ function AdminNavbar() {
     const [popupNavigate, setPopupNavigate] = useState('')
     const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
     const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
-
-    const {logout} = useAuth()
-
-    const handleAdminLogout = () => {
-        setPopupMessage('Biztos kijelentkezik?')
-        setPopupWindowCancelButtonPreview(true)
-        setPopupConfirmCallback(()=>()=>(adminLogout()))
-    }
+    const [adminHeadSidebarPreview, setAdminHeadSidebarPreview] = useState(false)
 
     const adminLogout = () => {
         sessionStorage.removeItem('userId')
         logout() 
+    }
+
+    const handleAdminHeadSidebar = () => {
+        setAdminHeadSidebarPreview(true)
+        if(adminHeadSidebarPreview){
+            setAdminHeadSidebarPreview(false)
+        }
     }
 
     return (
@@ -37,15 +37,11 @@ function AdminNavbar() {
                     <Link to='/adminupload' className="text-gray-300 hover:text-white transition duration-300">
                         Feltöltés
                     </Link>
-                    <button
-                        onClick={handleAdminLogout}
-                        className="text-gray-300 hover:text-white transition duration-300 focus:outline-none"
-                    >
-                        Kijelentkezés
-                    </button>
-                    <Link to='/adminuserData' className="text-gray-300 hover:text-white transition duration-300">
+                    <button 
+                        onClick={handleAdminHeadSidebar} 
+                        className="text-gray-300 hover:text-white transition duration-300">
                         <FaUser className="text-white" size={20} />
-                    </Link>
+                    </button>
                 </div>
             </div>
             {popupMessage && (
@@ -60,6 +56,9 @@ function AdminNavbar() {
                   }}
                   popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
               />
+            )}
+            {adminHeadSidebarPreview && (
+                <AdminHeadSidebar />
             )}
         </nav>
     );

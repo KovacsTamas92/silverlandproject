@@ -17,7 +17,7 @@ const AdminLogin = () => {
         if (!username || !password) {
             setPopupMessage('Kérlek add meg a felhasználó nevet és a jelszót!')
             setPopupNavigate('')
-            setPopupConfirmCallback(null)
+            setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
             return;
         }
 
@@ -36,28 +36,23 @@ const AdminLogin = () => {
                 login()
                 setPopupMessage('Sikeres bejelentkezés!')
                 setPopupNavigate('/adminmain')
-                setPopupConfirmCallback(null)
+                setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
             } else {
                 const message = await response.text();
                 setPopupMessage(`${message}`)
                 setPopupNavigate('')
-                setPopupConfirmCallback(null)
+                setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
             }
         } catch (error) {
             setPopupMessage(`${error}` )
             setPopupNavigate('')
-            setPopupConfirmCallback(null)
+            setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
         }
     };
 
     const navigateToRegistration = () => {
         navigate('/adminregistration')
     }
-
-    const handlePopupConfirm = () => {
-        setPopupMessage('');
-        setPopupNavigate('');
-    }; 
 
     return (
         <div>
@@ -109,7 +104,7 @@ const AdminLogin = () => {
                 <AdminPopupWindows 
                     message={popupMessage}
                     popupNavigate={popupNavigate}
-                    onConfirm={handlePopupConfirm} 
+                    onConfirm={popupConfirmCallback} 
                     onCancel={() => {
                         setPopupMessage('');
                         setPopupNavigate('');

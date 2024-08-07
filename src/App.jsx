@@ -48,6 +48,10 @@ function App() {
                 path="/adminupload"
                 element={<ProtectedRoute element={<AdminUpload />} />}
               />
+              <Route
+                path="/adminordering"
+                element={<ProtectedRoute element={<AdminOrderingPage />} />}
+              />
             </Routes>
           </div>
         </Router>

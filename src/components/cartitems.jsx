@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "../components/navbar";
 import SideBar from "../components/sidebar";
 import Logo from "../images/logo.gif";
@@ -7,17 +7,17 @@ import { useCart } from "../components/cartcontext";
 
 function CartItems() {
   const [cart, setCart] = useState([]);
-  const { removeItemFromCart } = useCart();
+  const { removeItemFromCart, updateItemQuantity } = useCart();
 
   useEffect(() => {
-    console.log("Session Storage tartalma:");
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      const value = sessionStorage.getItem(key);
+    console.log("Local Storage tartalma:");
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const value = localStorage.getItem(key);
       console.log(`Key: ${key}, Value: ${value}`);
     }
 
-    const savedCart = sessionStorage.getItem("cart");
+    const savedCart = localStorage.getItem("cart");
     console.log("Mentett kosár:", savedCart);
 
     if (savedCart) {
@@ -40,25 +40,11 @@ function CartItems() {
     }
   }, []);
 
-  const updateItemQuantity = (id, amount) => {
-    const updatedCart = cart
-      .map((product) => {
-        if (product._id === id) {
-          const newQuantity = product.quantity + amount;
-          if (newQuantity <= 0) return null; // Ha a mennyiség 0 vagy kevesebb, töröld a terméket
-          return { ...product, quantity: newQuantity };
-        }
-        return product;
-      })
-      .filter((item) => item !== null);
-
-    setCart(updatedCart);
-    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
-
   const deleteItem = (id) => {
     removeItemFromCart(id);
-    setCart(cart.filter((product) => product._id !== id));
+    const updatedCart = cart.filter((product) => product._id !== id);
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   const getGroupedCartItems = () => {
@@ -125,14 +111,18 @@ function CartItems() {
                   </h2>
                   <div className="flex items-center">
                     <button
-                      onClick={() => updateItemQuantity(product._id, -1)}
+                      onClick={() =>
+                        updateItemQuantity(product._id, product.quantity - 1)
+                      }
                       className="bg-gray-300 text-black font-bold py-1 px-2 rounded"
                     >
                       -
                     </button>
                     <p className="mx-4 text-lg">{product.quantity}</p>
                     <button
-                      onClick={() => updateItemQuantity(product._id, 1)}
+                      onClick={() =>
+                        updateItemQuantity(product._id, product.quantity + 1)
+                      }
                       className="bg-gray-300 text-black font-bold py-1 px-2 rounded"
                     >
                       +

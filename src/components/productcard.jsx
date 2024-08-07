@@ -26,18 +26,28 @@ function ProductCard() {
   }, []);
 
   const handleAddToCart = (product) => {
-    // Kosárba rakás logika
-    const savedCart = sessionStorage.getItem("cart");
+    const savedCart = localStorage.getItem("cart");
     const currentCart = savedCart ? JSON.parse(savedCart) : [];
 
-    const updatedCart = [...currentCart, product];
-    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+    const existingProductIndex = currentCart.findIndex(
+      (item) => item._id === product._id
+    );
 
-    // Kiírjuk a session storage tartalmát a konzolra
-    console.log("Session Storage tartalma kosárba rakás után:");
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      const value = sessionStorage.getItem(key);
+    if (existingProductIndex > -1) {
+      // Ha a termék már benne van a kosárban, növeljük a mennyiséget
+      currentCart[existingProductIndex].quantity += 1;
+    } else {
+      // Ha nem található, hozzáadjuk a terméket mennyiséggel együtt
+      product.quantity = 1;
+      currentCart.push(product);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(currentCart));
+
+    console.log("Local Storage tartalma kosárba rakás után:");
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const value = localStorage.getItem(key);
       console.log(`Key: ${key}, Value: ${value}`);
     }
 

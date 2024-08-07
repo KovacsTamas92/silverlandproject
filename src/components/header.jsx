@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import User from "../images/user.svg";
 import CartIcon from "./cart";
+import { useCart } from "../components/cartcontext";
 
 function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const loggedInStatus = localStorage.getItem("isLoggedIn");
@@ -26,8 +28,11 @@ function Header() {
     <nav className="ml-[255px] bg-slate-700">
       <div className="flex justify-end">
         <ul className="flex space-x-4">
-          <li>
+          <li className="relative">
             <CartIcon />
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-sm">
+              {cartCount}
+            </span>
           </li>
           <li className="relative">
             <button

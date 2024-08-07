@@ -26,15 +26,28 @@ function ProductCard() {
   }, []);
 
   const handleAddToCart = (product) => {
-    const savedCart = sessionStorage.getItem("cart");
+    const savedCart = localStorage.getItem("cart");
     const currentCart = savedCart ? JSON.parse(savedCart) : [];
 
-    const updatedCart = [...currentCart, product];
-    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+    // Check if the product is already in the cart
+    const existingProductIndex = currentCart.findIndex(
+      (item) => item._id === product._id
+    );
+
+    if (existingProductIndex > -1) {
+      // If the product already exists, update its quantity
+      currentCart[existingProductIndex].quantity += 1;
+    } else {
+      // Otherwise, add the new product with quantity 1
+      product.quantity = 1;
+      currentCart.push(product);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(currentCart));
 
     console.log(
-      "Session Storage tartalma:",
-      JSON.parse(sessionStorage.getItem("cart"))
+      "Local Storage tartalma:",
+      JSON.parse(localStorage.getItem("cart"))
     );
 
     addItemToCart(product);

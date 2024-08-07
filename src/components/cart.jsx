@@ -14,11 +14,7 @@ const CartIcon = () => {
   return (
     <div className="relative inline-block">
       <button onClick={toggleDropdown} className="relative">
-        <img
-          src={Basket}
-          alt="Kosár"
-          className="w-8 h-8" // Az ikon mérete egyezik a Header ikon méretével
-        />
+        <img src={Basket} alt="Kosár" className="w-8 h-8" />
         {cartCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
             {cartCount}

@@ -1,32 +1,61 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
+// Kosár kontextus létrehozása
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cartCount, setCartCount] = useState(() => {
-    const savedCount = sessionStorage.getItem("cartCount");
-    return savedCount ? parseInt(savedCount, 10) : 0;
-  });
+  const [cart, setCart] = useState([]);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    sessionStorage.setItem("cartCount", cartCount);
-  }, [cartCount]);
+    const savedCart = sessionStorage.getItem("cart");
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        if (Array.isArray(parsedCart)) {
+          setCart(parsedCart);
+          setCartCount(
+            parsedCart.reduce((acc, item) => acc + item.quantity, 0)
+          );
+        }
+      } catch (error) {
+        console.error("Hiba a kosár beállítása közben:", error);
+        setCart([]);
+      }
+    }
+  }, []);
 
-  const addItemToCart = () => {
-    setCartCount((prevCount) => prevCount + 1);
+  useEffect(() => {
+    sessionStorage.setItem("cart", JSON.stringify(cart));
+    setCartCount(cart.reduce((acc, item) => acc + item.quantity, 0));
+  }, [cart]);
+
+  const addItemToCart = (item) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((i) => i._id === item._id);
+      if (existingItem) {
+        return prevCart.map((i) =>
+          i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      } else {
+        return [...prevCart, { ...item, quantity: 1 }];
+      }
+    });
+  };
+
+  const removeItemFromCart = (id) => {
+    setCart((prevCart) => {
+      return prevCart.filter((item) => item._id !== id);
+    });
   };
 
   return (
-    <CartContext.Provider value={{ cartCount, addItemToCart }}>
+    <CartContext.Provider
+      value={{ cart, addItemToCart, removeItemFromCart, cartCount }}
+    >
       {children}
     </CartContext.Provider>
   );
 };
 
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (context === undefined) {
-    throw new Error("useCart must be used within a CartProvider");
-  }
-  return context;
-};
+export const useCart = () => useContext(CartContext);

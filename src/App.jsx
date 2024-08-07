@@ -18,6 +18,7 @@ import { CartProvider } from "./components/cartcontext";
 import Registration from "./pages/registration";
 import Userlogin from "./pages/userlogin";
 import UserProfile from "./pages/userprofile";
+import CartItems from "./components/cartitems";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               <Route path="/" element={<MainWebsite />} />
               <Route path="/registration" element={<Registration />} />
               <Route path="/userprofile" element={<UserProfile />} />
+              <Route path="/cart" element={<CartItems />} />
 
               <Route path="/elorendeles" element={<Elorendeles />} />
               <Route path="/rolunk" element={<Rolunk />} />
@@ -52,9 +54,9 @@ function App() {
                 path="/adminordering"
                 element={<ProtectedRoute element={<AdminOrderingPage />} />}
               />
-                <Route
-              path="/adminorderingedit"
-              element={<ProtectedRoute element={<AdminOrderingEdit />} />}
+              <Route
+                path="/adminorderingedit"
+                element={<ProtectedRoute element={<AdminOrderingEdit />} />}
               />
             </Routes>
           </div>

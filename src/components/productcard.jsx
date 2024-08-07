@@ -27,17 +27,17 @@ function ProductCard() {
 
   const handleAddToCart = (product) => {
     // Kosárba rakás logika
-    const savedCart = sessionStorage.getItem("cart");
+    const savedCart = localStorage.getItem("cart");
     const currentCart = savedCart ? JSON.parse(savedCart) : [];
 
     const updatedCart = [...currentCart, product];
-    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
 
     // Kiírjuk a session storage tartalmát a konzolra
     console.log("Session Storage tartalma kosárba rakás után:");
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      const value = sessionStorage.getItem(key);
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const value = localStorage.getItem(key);
       console.log(`Key: ${key}, Value: ${value}`);
     }
 

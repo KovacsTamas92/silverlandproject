@@ -11,13 +11,13 @@ function CartItems() {
 
   useEffect(() => {
     console.log("Session Storage tartalma:");
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      const value = sessionStorage.getItem(key);
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const value = localStorage.getItem(key);
       console.log(`Key: ${key}, Value: ${value}`);
     }
 
-    const savedCart = sessionStorage.getItem("cart");
+    const savedCart = localStorage.getItem("cart");
     console.log("Mentett kosár:", savedCart);
 
     if (savedCart) {
@@ -53,7 +53,7 @@ function CartItems() {
       .filter((item) => item !== null);
 
     setCart(updatedCart);
-    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   const deleteItem = (id) => {

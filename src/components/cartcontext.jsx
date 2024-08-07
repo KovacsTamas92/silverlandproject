@@ -8,7 +8,7 @@ export const CartProvider = ({ children }) => {
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    const savedCart = sessionStorage.getItem("cart");
+    const savedCart = localStorage.getItem("cart");
     if (savedCart) {
       try {
         const parsedCart = JSON.parse(savedCart);
@@ -26,7 +26,7 @@ export const CartProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    sessionStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem("cart", JSON.stringify(cart));
     setCartCount(cart.reduce((acc, item) => acc + item.quantity, 0));
   }, [cart]);
 

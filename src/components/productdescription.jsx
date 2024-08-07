@@ -26,15 +26,15 @@ function ProductCard() {
   }, []);
 
   const handleAddToCart = (product) => {
-    const savedCart = sessionStorage.getItem("cart");
+    const savedCart = localStorage.getItem("cart");
     const currentCart = savedCart ? JSON.parse(savedCart) : [];
 
     const updatedCart = [...currentCart, product];
-    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
 
     console.log(
       "Session Storage tartalma:",
-      JSON.parse(sessionStorage.getItem("cart"))
+      JSON.parse(localStorage.getItem("cart"))
     );
 
     addItemToCart(product);

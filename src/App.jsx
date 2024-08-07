@@ -52,6 +52,10 @@ function App() {
                 path="/adminordering"
                 element={<ProtectedRoute element={<AdminOrderingPage />} />}
               />
+                <Route
+              path="/adminorderingedit"
+              element={<ProtectedRoute element={<AdminOrderingEdit />} />}
+              />
             </Routes>
           </div>
         </Router>

@@ -30,7 +30,7 @@ mongoose.connect(url)
 //Termék feltöltése
 app.post('/api/data', (req, res) => {
 
-  const {file, name, price, description, maincategory, subcategory, user_id, type_of_paid, type_of_delivery, date_of_publication, date_of_upload, number_of_items} = req.body
+  const {file, name, price, description, maincategory, subcategory, type_of_paid, type_of_delivery, date_of_publication, date_of_upload, number_of_items} = req.body
 
   if (!req.body || !file) {
     res.status(400).send('Nincs fájl az adatokban!');
@@ -44,7 +44,6 @@ app.post('/api/data', (req, res) => {
     description,
     maincategory,
     subcategory,
-    user_id,
     type_of_paid,
     type_of_delivery,
     date_of_publication, 
@@ -107,10 +106,10 @@ app.delete('/api/data/:id', (req, res) => {
 // Termék frissítése ID alapján
 app.put('/api/data/:id', (req, res) => {
   const id = req.params.id;
-  const { file, name, price, description, maincategory, subcategory, user_id, type_of_paid, type_of_delivery, date_of_publication, date_of_upload, number_of_items } = req.body;
+  const { file, name, price, description, maincategory, subcategory, type_of_paid, type_of_delivery, date_of_publication, date_of_upload, number_of_items } = req.body;
 
   DataModel.findByIdAndUpdate(
-    id, { file, name, price, description, maincategory, subcategory,user_id, type_of_paid, type_of_delivery, date_of_publication, date_of_upload, number_of_items }, { new: true, runValidators: true })
+    id, { file, name, price, description, maincategory, subcategory, type_of_paid, type_of_delivery, date_of_publication, date_of_upload, number_of_items }, { new: true, runValidators: true })
       .then((updatedData) => {
           if (!updatedData) {
               return res.status(404).send('A keresett adat nem található!');
@@ -365,9 +364,9 @@ app.delete('/api/user/:id', (req, res) => {
 
 // Rendelés leadása útvonal
 app.post('/api/userorder', async (req, res) => {
-  const { ordered_data, name, price, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;
+  const { user_id, ordered_data, name, price, email, phone_number, tracking_name, country, zip_code, city, address } = req.body;
 
-  if (!ordered_data || !name || !price || !email || !phone_number || !tracking_name || !country || !zip_code || !city || !address) {
+  if (!user_id, !ordered_data || !name || !price || !email || !phone_number || !tracking_name || !country || !zip_code || !city || !address) {
     return res.status(400).send('Nincs fájl az adatokban!');
   }
 
@@ -390,7 +389,8 @@ app.post('/api/userorder', async (req, res) => {
       address,
       ordered_data,
       order_number: orderNumber,
-      is_active: true
+      is_active: true,
+      user_id
     });
 
     await orderingData.save();
@@ -418,7 +418,7 @@ app.get('/api/userorder', (req, res) => {
 //Rendelés frissítés Id alapján
 app.put('/api/userorder/:id', async (req, res) => {
   const id = req.params.id;
-  const { is_active, ordered_data, name, price, email, phone_number, tracking_name, country, zip_code, city, address, order_number } = req.body;
+  const { user_id, is_active, ordered_data, name, price, email, phone_number, tracking_name, country, zip_code, city, address, order_number } = req.body;
 
   try {
 
@@ -434,7 +434,8 @@ app.put('/api/userorder/:id', async (req, res) => {
       address,
       ordered_data,
       order_number,
-      is_active
+      is_active,
+      user_id
     };
     
     const updatedOrdering = await OrderingModel.findByIdAndUpdate(id, updatedOrderingData, { new: true, runValidators: true });

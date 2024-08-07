@@ -31,10 +31,6 @@ const dataSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    user_id: {
-        type: String,
-        required: true
-    },
     type_of_paid: {
         type: String,
         required: true

@@ -48,7 +48,11 @@ const orderingSchema = new mongoose.Schema({
     is_active:{
         type: Boolean,
         required: true
-    }
+    },
+    user_id: {
+        type: String,
+        required: true
+    },
 });
 
 const OrderingModel = mongoose.model('ordering', orderingSchema);

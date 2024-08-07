@@ -1,73 +1,98 @@
-import Pathfinder from "../images/pathfinder.png";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useCart } from "./cartcontext";
 
-function ProductDescription() {
-  const [value, setValue] = useState(0);
+function ProductCard() {
+  const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
+  const { addItemToCart } = useCart();
 
-  const handleChange = (e) => {
-    const newValue = e.target.value;
-    if (!isNaN(newValue) && newValue !== "") {
-      setValue(parseInt(newValue, 10));
-    }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/data");
+        if (!response.ok) {
+          throw new Error("Hiba történt az adatok lekérdezésekor!");
+        }
+        const result = await response.json();
+        console.log("Fetched data: ", result);
+        setData(result);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleAddToCart = (product) => {
+    const savedCart = sessionStorage.getItem("cart");
+    const currentCart = savedCart ? JSON.parse(savedCart) : [];
+
+    const updatedCart = [...currentCart, product];
+    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
+
+    console.log(
+      "Session Storage tartalma:",
+      JSON.parse(sessionStorage.getItem("cart"))
+    );
+
+    addItemToCart(product);
   };
 
-  const increment = () => {
-    setValue((prevValue) => prevValue + 1);
-  };
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
-  const decrement = () => {
-    setValue((prevValue) => (prevValue > 0 ? prevValue - 1 : 0));
-  };
+  if (!data.length) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="flex justify-center items-start p-4">
-      <div className="w-1/3 flex justify-center">
-        <img
-          src={Pathfinder}
-          alt="Pathfinder"
-          className="mx-auto max-w-full h-auto"
-          style={{ maxWidth: "600px" }}
-        />
-      </div>
-      <div className="w-1/2 text-left ml-16">
-        <h1 className="text-2xl font-bold mb-2">Pathfinder</h1>
-        <h2 className="text-xl font-bold text-gray-600 mb-4">17 990 Ft</h2>
-        <div className="flex items-center mb-4">
-          <div className="relative">
-            <input
-              type="number"
-              value={value}
-              onChange={handleChange}
-              className="border border-gray-300 rounded-md pl-4 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+    <div className="flex flex-wrap justify-center">
+      {data.map((product) => (
+        <div
+          key={product.id}
+          className="border border-gray-200 shadow-2xl rounded-md p-4 m-4 text-center w-60"
+        >
+          {product.file ? (
+            <img
+              src={product.file}
+              alt={product.name}
+              className="mx-auto h-40 object-contain"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "default-image-path";
+              }}
             />
-            <div className="absolute inset-y-0 right-0 flex flex-col items-center justify-center pr-1">
-              <button
-                type="button"
-                onClick={increment}
-                className="text-gray-600 hover:text-black focus:outline-none"
-              >
-                ▲
-              </button>
-              <button
-                type="button"
-                onClick={decrement}
-                className="text-gray-600 hover:text-black focus:outline-none"
-              >
-                ▼
-              </button>
+          ) : (
+            <div className="mx-auto h-40 flex items-center justify-center bg-gray-200">
+              Nincs kép
             </div>
+          )}
+          <h2 className="text-xl font-bold mt-2">{product.name}</h2>
+          <h3 className="text-sm text-gray-500 mb-2">{product.status}</h3>
+          <h2 className="text-2xl font-bold mb-4">{product.price} Ft</h2>
+
+          <div className="flex flex-col mt-4">
+            <button
+              className="bg-black text-white font-bold py-2 px-4 rounded mb-2"
+              onClick={() => handleAddToCart(product)}
+            >
+              Kosárba
+            </button>
+
+            <Link
+              to={`/description/${product.id}`}
+              className="underline text-black hover:text-blue-600 font-bold py-2 px-4"
+            >
+              Részletek
+            </Link>
           </div>
         </div>
-        <button className="bg-black text-white font-bold py-2 px-4 rounded mb-2">
-          Kosárba
-        </button>
-        <h3 className="text-lg font-semibold mt-4">Termékleírás</h3>
-        <p className="text-gray-700">
-          Itt található a termék részletes leírása...
-        </p>
-      </div>
+      ))}
     </div>
   );
 }
 
-export default ProductDescription;
+export default ProductCard;

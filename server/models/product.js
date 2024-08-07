@@ -30,7 +30,31 @@ const dataSchema = new mongoose.Schema({
     subcategory: {
         type: String,
         required: true
-    }
+    },
+    user_id: {
+        type: String,
+        required: true
+    },
+    type_of_paid: {
+        type: String,
+        required: true
+    },
+    type_of_delivery: {
+        type: String,
+        required: true
+    },
+    date_of_publication: {
+        type: Date,
+        required: true
+    },
+    date_of_upload: {
+        type: Date,
+        required: true
+    },
+    number_of_items: {
+        type: Number,
+        required: true
+    },
 });
 
 const DataModel = mongoose.model('datas', dataSchema);

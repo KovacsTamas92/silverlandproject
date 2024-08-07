@@ -30,7 +30,7 @@ mongoose.connect(url)
 //Termék feltöltése
 app.post('/api/data', (req, res) => {
 
-  const {file, name, price, description, maincategory, subcategory} = req.body
+  const {file, name, price, description, maincategory, subcategory, user_id, type_of_paid, type_of_delivery, date_of_publication, date_of_upload, number_of_items} = req.body
 
   if (!req.body || !file) {
     res.status(400).send('Nincs fájl az adatokban!');
@@ -43,7 +43,13 @@ app.post('/api/data', (req, res) => {
     price,
     description,
     maincategory,
-    subcategory
+    subcategory,
+    user_id,
+    type_of_paid,
+    type_of_delivery,
+    date_of_publication, 
+    date_of_upload, 
+    number_of_items
   });
 
   data.save().then(() => {
@@ -101,9 +107,10 @@ app.delete('/api/data/:id', (req, res) => {
 // Termék frissítése ID alapján
 app.put('/api/data/:id', (req, res) => {
   const id = req.params.id;
-  const { file, name, price, description, maincategory, subcategory } = req.body;
+  const { file, name, price, description, maincategory, subcategory, user_id, type_of_paid, type_of_delivery, date_of_publication, date_of_upload, number_of_items } = req.body;
 
-  DataModel.findByIdAndUpdate(id, { file, name, price, description, maincategory, subcategory }, { new: true, runValidators: true })
+  DataModel.findByIdAndUpdate(
+    id, { file, name, price, description, maincategory, subcategory,user_id, type_of_paid, type_of_delivery, date_of_publication, date_of_upload, number_of_items }, { new: true, runValidators: true })
       .then((updatedData) => {
           if (!updatedData) {
               return res.status(404).send('A keresett adat nem található!');

@@ -123,7 +123,9 @@ const AdminOrderingPage = () => {
     { field: "city", headerName: "Város", width: 100 },
     { field: "address", headerName: "Cím", width: 100 },
     { field: "ordered_data", headerName: "Termékek", width: 100 },
-    { field: "price", headerName: "Ár(Ft)", type: "number", width: 80 },
+    { field: "type_of_delivery", headerName: "Szállítási mód", width: 100 },
+    { field: "type_of_paid", headerName: "Fizetési mód", width: 80 },
+    { field: "price", headerName: "Ár(Ft)", type: "number", width: 80 },  
     {
       field: "Action",
       headerName: "",

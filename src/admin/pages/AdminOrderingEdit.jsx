@@ -15,6 +15,8 @@ const AdminOrderingEdit = () => {
     const [country, setCountry] = useState("");
     const [address, setAddress] = useState("");
     const [ordered_data, setOrderData] = useState("");
+    const [typeOfDelivery, setTypeOfDelivery] = useState("")
+    const [typeOfPaid, setTypeOfPaid] = useState("")
     const [popupMessage, setPopupMessage] = useState("");
     const [popupNavigate, setPopupNavigate] = useState("");
     const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
@@ -37,6 +39,8 @@ const AdminOrderingEdit = () => {
                 setCountry(item.country);
                 setAddress(item.address);
                 setOrderData(item.ordered_data);
+                setTypeOfDelivery(item.type_of_delivery)
+                setTypeOfPaid(item.type_of_paid)
             } catch (error) {
                 console.error("Hiba a termék adatainak betöltése során:", error);
             }
@@ -62,6 +66,8 @@ const AdminOrderingEdit = () => {
                     country,
                     address,
                     ordered_data,
+                    type_of_delivery: typeOfDelivery,
+                    type_of_paid: typeOfPaid
                 }),
             });
 
@@ -193,6 +199,30 @@ const AdminOrderingEdit = () => {
                             id="ordered_data"
                             value={ordered_data}
                             onChange={(e) => setOrderData(e.target.value)}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ordered_data">
+                            Szállítási mód
+                        </label>
+                        <textarea
+                            id="type_of_delivery"
+                            value={typeOfDelivery}
+                            onChange={(e) => setTypeOfDelivery(e.target.value)}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ordered_data">
+                            Fizetési mód
+                        </label>
+                        <textarea
+                            id="type_of_paid"
+                            value={typeOfPaid}
+                            onChange={(e) => setTypeOfPaid(e.target.value)}
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             required
                         />

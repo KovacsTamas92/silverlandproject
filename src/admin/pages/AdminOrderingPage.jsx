@@ -164,6 +164,8 @@ const AdminOrderingPage = () => {
     address: item.address,
     ordered_data: item.ordered_data,
     order_number: item.order_number,
+    type_of_paid: item.type_of_paid,
+    type_of_delivery: item.type_of_delivery
   }));
 
   return (

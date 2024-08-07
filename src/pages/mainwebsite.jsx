@@ -21,15 +21,8 @@ function MainWebsite() {
       <div>
         <SideBar />
       </div>
-      <div className="ml-[255px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 m-5">
-        <ProductCard /> <ProductCard /> <ProductCard /> <ProductCard />
-        <ProductCard /> <ProductCard /> <ProductCard /> <ProductCard />
-        <ProductCard /> <ProductCard /> <ProductCard /> <ProductCard />
-        <ProductCard /> <ProductCard /> <ProductCard /> <ProductCard />
-        <ProductCard /> <ProductCard /> <ProductCard /> <ProductCard />
-        <ProductCard /> <ProductCard /> <ProductCard /> <ProductCard />
-        <ProductCard /> <ProductCard /> <ProductCard /> <ProductCard />
-        <ProductCard /> <ProductCard /> <ProductCard /> <ProductCard />
+      <div className="ml-[255px] flex flex-wrap gap-4 justify-start">
+        <ProductCard />
       </div>
     </div>
   );

@@ -53,6 +53,14 @@ const orderingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    type_of_paid: {
+        type: String,
+        required: true
+    },
+    type_of_delivery: {
+        type: String,
+        required: true
+    },
 });
 
 const OrderingModel = mongoose.model('ordering', orderingSchema);

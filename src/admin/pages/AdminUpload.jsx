@@ -59,7 +59,7 @@ const AdminUpload = () => {
             "Egyéb külföldi szerepjátékok / Other RPGs in English",
             "Kalandjáték könyvek angolul / Fighting Fantasy",
         ],
-        "Magyar nyelvű könyvek":[
+        "Magyar nyelvű könyvek": [
             "AD&D, D&D",
             "Battletech reények",
             "Cherubion",
@@ -86,7 +86,7 @@ const AdminUpload = () => {
             "World of Darkness regények",
             "További regények",
         ],
-        "Angol nyelvű könyvek":[
+        "Angol nyelvű könyvek": [
             "Dragonlance",
             "Forgotten Realms",
             "Greyhawk",
@@ -116,16 +116,16 @@ const AdminUpload = () => {
             "Warcraft and other computer game related",
             "Other Writers",
         ],
-        "Gyűjthető kártyajátékok":[
-            "Magyar kártyajátékok", 
+        "Gyűjthető kártyajátékok": [
+            "Magyar kártyajátékok",
             "Angol kártyajátékok"
         ],
-        "Társasjátékok":[
+        "Társasjátékok": [
             "Magyar játékok",
             "Angol táblás játékok / Boardgames",
             "Egyéb angol játékok"
         ],
-        "Figurák és figurás játékok":[
+        "Figurák és figurás játékok": [
             "DnD és más fantasy figurák",
             "Gyűrűk Ura",
             "Mage Knight",
@@ -136,7 +136,7 @@ const AdminUpload = () => {
             "Egyéb figurás játékok",
             "Egyéb figurák"
         ],
-        "Magazinok":[
+        "Magazinok": [
             "Alanori Krónika",
             "Bíborhold",
             "Dragon",
@@ -145,7 +145,7 @@ const AdminUpload = () => {
             "Egyéb magyar magazinok",
             "Angol magazinok"
         ],
-        "Egyebek":[
+        "Egyebek": [
             "Dobókockák",
             "Festékek, ecsetek, modellezés",
             "Puzzle",
@@ -165,12 +165,14 @@ const AdminUpload = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
-    const [itemId, setItemId] = useState(null); 
-    const [popupMessage, setPopupMessage] = useState('')
-    const [popupNavigate, setPopupNavigate] = useState('')
-    const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
-    const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
- 
+    const [dateOfPublication, setDateOfPublication] = useState(new Date().toISOString().split('T')[0]);
+    const [dateOfUpload, setDateOfUpload] = useState(new Date().toISOString().split('T')[0]); // Az aktuális dátum
+    const [numberOfItems, setNumberOfItems] = useState(0);
+    const [itemId, setItemId] = useState(null);
+    const [popupMessage, setPopupMessage] = useState('');
+    const [popupNavigate, setPopupNavigate] = useState('');
+    const [popupConfirmCallback, setPopupConfirmCallback] = useState(() => () => (setPopupMessage(""), setPopupNavigate("")));
+    const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false);
 
     useEffect(() => {
         if (location.state && location.state.id) {
@@ -189,16 +191,18 @@ const AdminUpload = () => {
                     setPrice(item.price);
                     setDescription(item.description);
                     setFilePreview(item.file);
+                    setDateOfPublication(item.date_of_publication);
+                    setNumberOfItems(item.number_of_items);
                 } catch (error) {
-                    console.error('Hiba a termék adatainak betöltése során:', error);  
-                    setPopupMessage(`Hiba történt az adatainak betöltése során:${error}`)   
+                    console.error('Hiba a termék adatainak betöltése során:', error);
+                    setPopupMessage(`Hiba történt az adatainak betöltése során:${error}`)
                 }
             };
             fetchItem();
         }
     }, [location.state]);
 
-    //Aktuális kép beállítása
+    // Aktuális kép beállítása
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         setFile(selectedFile);
@@ -209,15 +213,15 @@ const AdminUpload = () => {
         reader.readAsDataURL(selectedFile);
     };
 
-    //handleSubmit
+    // handleSubmit
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         if (!selectedMainCategory || !selectedSubCategory || !name || !price || !description) {
             setPopupMessage('Minden mezőt ki kell tölteni!')
             return;
         }
-    
+
         if (file) {
             const reader = new FileReader();
             reader.onloadend = async () => {
@@ -237,9 +241,12 @@ const AdminUpload = () => {
             price,
             description,
             maincategory: selectedMainCategory,
-            subcategory: selectedSubCategory
+            subcategory: selectedSubCategory,
+            date_of_publication: dateOfPublication,
+            date_of_upload: dateOfUpload,
+            number_of_items: numberOfItems
         };
-    
+
         try {
             const method = itemId ? 'PUT' : 'POST'; // Ha van itemId, PUT kérést használunk
             const url = itemId ? `http://localhost:3000/api/data/${itemId}` : 'http://localhost:3000/api/data';
@@ -253,16 +260,24 @@ const AdminUpload = () => {
             if (!response.ok) {
                 throw new Error('Hiba történt az adat mentése során!');
             }
-            setPopupNavigate('/adminmain')   
-            setPopupMessage('Termék sikeresen mentve!')  
-        } catch (error) {  
-            setPopupMessage(`Hiba történt az adat mentése során:${error}`)  
+            setPopupNavigate('/adminmain')
+            setPopupMessage('Termék sikeresen mentve!')
+        } catch (error) {
+            setPopupMessage(`Hiba történt az adat mentése során:${error}`)
         }
     };
-    
+
 
     const handleBack = () => {
         navigate('/adminmain');
+    };
+
+    const incrementNumberOfItems = () => {
+        setNumberOfItems((prevValue) => prevValue + 1);
+    };
+
+    const decrementNumberOfItems = () => {
+        setNumberOfItems((prevValue) => Math.max(0, prevValue - 1));
     };
 
     return (
@@ -322,7 +337,7 @@ const AdminUpload = () => {
                         <input
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             id="price"
-                            type="number"
+                            type="text"
                             placeholder="Termék ára"
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
@@ -339,6 +354,39 @@ const AdminUpload = () => {
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dateOfPublication">
+                            Megjelenés dátuma
+                        </label>
+                        <input
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="dateOfPublication"
+                            type="date"
+                            placeholder="Megjelenés dátuma"
+                            value={dateOfPublication}
+                            onChange={(e) => setDateOfPublication(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-4 flex flex-col items-start">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                            Termékek száma
+                        </label>
+                        <div className="flex items-center space-x-2">
+                            <button 
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold w-8 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm flex items-center justify-center"
+                                type="button" 
+                                onClick={decrementNumberOfItems}>
+                                <span className="text-lg">-</span>
+                            </button>
+                            <span className="text-lg font-semibold">{numberOfItems}</span>
+                            <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold w-8 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm flex items-center justify-center"
+                                type="button" 
+                                onClick={incrementNumberOfItems}>
+                                <span className="text-lg">+</span>
+                            </button>
+                        </div>
                     </div>
                     <div className="mb-4 flex items-center">
                         <div className="flex-1">
@@ -370,26 +418,26 @@ const AdminUpload = () => {
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             type="submit"
                         >
-                            {itemId ? 'Módosítás' : 'Feltöltés'}
+                            Mentés
                         </button>
                     </div>
                 </form>
             </div>
             {popupMessage && (
-                  <AdminPopupWindows
-                  message={popupMessage} 
-                  popupNavigate={popupNavigate}
-                  onConfirm={popupConfirmCallback} 
-                  onCancel={() => {
-                    setPopupMessage('');
-                    setPopupNavigate('');
-                    setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")));
-                  }}
-                  popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
-              />
+                 <AdminPopupWindows
+                 message={popupMessage} 
+                 popupNavigate={popupNavigate}
+                 onConfirm={popupConfirmCallback} 
+                 onCancel={() => {
+                   setPopupMessage('');
+                   setPopupNavigate('');
+                   setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")));
+                 }}
+                 popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
+                 />
             )}
         </div>
     );
-};
+}
 
 export default AdminUpload;

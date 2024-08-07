@@ -67,6 +67,14 @@ const AdminMainPage = () => {
         navigate('/adminupload', { state: { id } });
     };
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
     const filteredData = data.filter(item => 
         (!selectedCategory || item.maincategory === selectedCategory) &&
         (!selectedSubCategory || item.subcategory === selectedSubCategory)
@@ -90,6 +98,16 @@ const AdminMainPage = () => {
         { field: 'description', headerName: 'Leírás', width: 250 }, 
         { field: 'maincategory', headerName: 'Fő Kategória', width: 150 }, 
         { field: 'subcategory', headerName: 'Al Kategória', width: 150 }, 
+        { 
+            field: 'date_of_publication', 
+            headerName: 'Megjelenés dátuma', 
+            width: 150, 
+            renderCell: (params) => formatDate(params.value) },
+        { 
+            field: 'date_of_upload', 
+            headerName: 'Feltöltés dátuma', 
+            width: 150, renderCell: (params) => formatDate(params.value) },
+        { field: 'number_of_items', headerName: 'Termék darabszáma', width: 150 },   
         {
             field: 'actions',
             headerName: '',
@@ -120,7 +138,10 @@ const AdminMainPage = () => {
         description: item.description,
         maincategory: item.maincategory,
         subcategory: item.subcategory,
-        image: item.file
+        image: item.file,
+        date_of_publication: item.date_of_publication,
+        date_of_upload: item.date_of_upload,
+        number_of_items: item.number_of_items
     }));
 
     return (

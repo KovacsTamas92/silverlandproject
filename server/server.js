@@ -472,7 +472,7 @@ app.post('/api/userorder', async (req, res) => {
       from: 'silverland2024@gmail.com',
       to: 'silverland2024@gmail.com',
       subject: 'Új rendelés érkezett!',
-      text: `Kedves Admin,\n\nÚj rendelés érkezett, a rendelés számod: ${orderNumber}.\n\nÜdvözlettel, Silverland`
+      text: `Kedves Admin,\n\nÚj rendelés érkezett, a rendelés száma: ${orderNumber}.\n\nÜdvözlettel, Silverland`
     };
 
     sendMail(sendToOrder)

@@ -605,41 +605,45 @@ app.get('/api/userorder/:id', (req, res) => {
       });
 });
 
-app.get('/api/userorderdone/:id', (req, res) => {
+app.get('/api/userorderdone/:id', async (req, res) => {
   const id = req.params.id;
   
-  OrderingModel.findById(id)
-      .then((data) => {
-          if (!data) {
-              return res.status(404).send('A keresett rendelés nem található!');
-          }
-          res.send(data);
-          const orderDoneEmail = {
-            from: 'silverland2024@gmail.com',
-            to: data.email,
-            subject: 'Rendelésed elkészült!',
-            text: `Kedves ${data.name},\n\nRendelésedet sikeresen elkészült! A rendelési számod: ${data.order_number}.\n\nItt találhatóak a rendelési adatok:\n\n` +
-            `- Név: ${data.name}\n` +
-            `- Ár: ${data.price}\n` +
-            `- Telefon szám: ${data.phone_number}\n` +
-            `- Követési név: ${data.tracking_name}\n` +
-            `- Ország: ${data.country}\n` +
-            `- Irányítószám: ${data.zip_code}\n` +
-            `- Város: ${data.city}\n` +
-            `- Cím: ${data.address}\n` +
-            `- Rendelési adatok: ${data.ordered_data}\n` +
-            `- Fizetési mód: ${data.type_of_paid}\n` +
-            `- Szállítási mód: ${data.type_of_delivery}\n\n` +
-            `Üdvözlettel,\nSilverland csapata`
-          };
+  try {
 
-          sendMail(orderDoneEmail)
-      })
-      .catch((err) => {
-          console.log('Hiba a rendelés lekérdezésekor:', err);
-          res.status(500).send('Hiba a rendelés lekérdezésekor!');
-      });
+    const data = await OrderingModel.findById(id);
+
+    if (data.is_active === true) {
+      return res.send(data); 
+    }
+    
+    const orderDoneEmail = {
+      from: 'silverland2024@gmail.com',
+      to: data.email,
+      subject: 'Rendelésed elkészült!',
+      text: `Kedves ${data.name},\n\nRendelésedet sikeresen elkészült! A rendelési számod: ${data.order_number}.\n\nItt találhatóak a rendelési adatok:\n\n` +
+      `- Név: ${data.name}\n` +
+      `- Ár: ${data.price}\n` +
+      `- Telefon szám: ${data.phone_number}\n` +
+      `- Követési név: ${data.tracking_name}\n` +
+      `- Ország: ${data.country}\n` +
+      `- Irányítószám: ${data.zip_code}\n` +
+      `- Város: ${data.city}\n` +
+      `- Cím: ${data.address}\n` +
+      `- Rendelési adatok: ${data.ordered_data}\n` +
+      `- Fizetési mód: ${data.type_of_paid}\n` +
+      `- Szállítási mód: ${data.type_of_delivery}\n\n` +
+      `Üdvözlettel,\nSilverland csapata`
+    };
+
+    sendMail(orderDoneEmail);
+    res.send(data);
+
+  } catch (err) {
+    console.log('Hiba a rendelés lekérdezésekor:', err);
+    res.status(500).send('Hiba a rendelés lekérdezésekor!');
+  }
 });
+
 
 
 app.listen(port, () => {

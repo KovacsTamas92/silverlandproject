@@ -49,6 +49,7 @@ const AdminOrderingPage = () => {
       isActive = true;
       setPopupMessage("Biztos, hogy újra aktiválod a rendelést?");
       setPopupWindowCancelButtonPreview(true)
+      setPopupConfirmCallback(() => () => handleActive(id, isActive));
     } else {
       setPopupMessage("Biztos lezárod a rendelést?");
       setPopupWindowCancelButtonPreview(true)
@@ -56,7 +57,7 @@ const AdminOrderingPage = () => {
     }
   };
 
-  const handleDoneOrder = async (id, email) => {
+  const handleDoneOrder = async (id) => {
       try {
         const response = await fetch(`http://localhost:3000/api/userorderdone/${id}`);
         if (!response.ok) {
@@ -77,7 +78,7 @@ const AdminOrderingPage = () => {
     setPopupConfirmCallback(() => () => handleDelete(id));
   }
 
-  const handleActive = async (id, isActive, email) => {
+  const handleActive = async (id, isActive) => {
     try {
       const response = await fetch(`http://localhost:3000/api/userorder/${id}`, {
         method: "PUT",
@@ -153,7 +154,7 @@ const AdminOrderingPage = () => {
           </button>
           {orderStatus === "active" ? (
             <div className="flex">
-              <button className="py-1 px-2" onClick={() => confirmActiveChange(params.id, params.email)}>
+              <button className="py-1 px-2" onClick={() => confirmActiveChange(params.id)}>
                 <FaCheck size={20} />
               </button>
               <button className="py-1 px-2" onClick={() => handleEdit(params.id)}>

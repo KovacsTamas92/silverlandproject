@@ -15,6 +15,7 @@ const AdminOrderingEdit = () => {
     const [country, setCountry] = useState("");
     const [address, setAddress] = useState("");
     const [ordered_data, setOrderData] = useState("");
+    const [order_number, setOrderNumber] = useState(0)
     const [typeOfDelivery, setTypeOfDelivery] = useState("")
     const [typeOfPaid, setTypeOfPaid] = useState("")
     const [popupMessage, setPopupMessage] = useState("");
@@ -39,6 +40,7 @@ const AdminOrderingEdit = () => {
                 setCountry(item.country);
                 setAddress(item.address);
                 setOrderData(item.ordered_data);
+                setOrderNumber(item.order_number)
                 setTypeOfDelivery(item.type_of_delivery)
                 setTypeOfPaid(item.type_of_paid)
             } catch (error) {
@@ -66,6 +68,7 @@ const AdminOrderingEdit = () => {
                     country,
                     address,
                     ordered_data,
+                    order_number,
                     type_of_delivery: typeOfDelivery,
                     type_of_paid: typeOfPaid
                 }),

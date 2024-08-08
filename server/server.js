@@ -517,6 +517,8 @@ app.put('/api/userorder/:id', async (req, res) => {
 
   try {
 
+    const currentData = await OrderingModel.findById(id);
+
     const updatedOrderingData = {
       name,
       price, 
@@ -540,26 +542,32 @@ app.put('/api/userorder/:id', async (req, res) => {
     console.log('A rendelés sikeresen frissítve lett!');
     res.status(200).send(updatedOrdering);
 
-    const orderEditEmail = {
-      from: 'silverland2024@gmail.com',
-      to: email,
-      subject: 'Sikeres frissítés!',
-      text: `Kedves ${name},\n\nRendelésedet sikeresen frissítettük! A rendelési számod: ${order_number}.\n\nItt találhatóak a rendelési adatok:\n\n` +
-      `- Név: ${name}\n` +
-      `- Ár: ${price}\n` +
-      `- Telefon szám: ${phone_number}\n` +
-      `- Követési név: ${tracking_name}\n` +
-      `- Ország: ${country}\n` +
-      `- Irányítószám: ${zip_code}\n` +
-      `- Város: ${city}\n` +
-      `- Cím: ${address}\n` +
-      `- Rendelési adatok: ${ordered_data}\n` +
-      `- Fizetési mód: ${type_of_paid}\n` +
-      `- Szállítási mód: ${type_of_delivery}\n\n` +
-      `Üdvözlettel,\nSilverland csapata`
-    };
+    const shouldSendEmail = Object.keys(updatedOrderingData).some(key => 
+      updatedOrderingData[key] !== currentData[key] && key !== 'is_active'
+    );
 
-    sendMail(orderEditEmail)
+    if (shouldSendEmail) {
+      const orderEditEmail = {
+        from: 'silverland2024@gmail.com',
+        to: email,
+        subject: 'Sikeres frissítés!',
+        text: `Kedves ${name},\n\nRendelésedet sikeresen frissítettük! A rendelési számod: ${order_number}.\n\nItt találhatóak a rendelési adatok:\n\n` +
+        `- Név: ${name}\n` +
+        `- Ár: ${price}\n` +
+        `- Telefon szám: ${phone_number}\n` +
+        `- Követési név: ${tracking_name}\n` +
+        `- Ország: ${country}\n` +
+        `- Irányítószám: ${zip_code}\n` +
+        `- Város: ${city}\n` +
+        `- Cím: ${address}\n` +
+        `- Rendelési adatok: ${ordered_data}\n` +
+        `- Fizetési mód: ${type_of_paid}\n` +
+        `- Szállítási mód: ${type_of_delivery}\n\n` +
+        `Üdvözlettel,\nSilverland csapata`
+      };
+
+      sendMail(orderEditEmail);
+    }
 
   } catch (err) {
     console.log('Hiba a rendelés frissítésekor:', err);

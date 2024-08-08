@@ -465,7 +465,19 @@ app.post('/api/userorder', async (req, res) => {
       from: 'silverland2024@gmail.com',
       to: email,
       subject: 'Rendelés visszaigazolása',
-      text: `Kedves ${name},\n\nKöszönjük a rendelésed! A rendelési számod: ${orderNumber}.\n\nÜdvözlettel,\nSilverland csapata`
+      text: `Kedves ${name},\n\nKöszönjük a rendelésed! A rendelési számod: ${orderNumber}.\n\nItt találhatóak a rendelési adatok:\n\n` +
+      `- Név: ${name}\n` +
+      `- Ár: ${price}\n` +
+      `- Telefon szám: ${phone_number}\n` +
+      `- Követési név: ${tracking_name}\n` +
+      `- Ország: ${country}\n` +
+      `- Irányítószám: ${zip_code}\n` +
+      `- Város: ${city}\n` +
+      `- Cím: ${address}\n` +
+      `- Rendelési adatok: ${ordered_data}\n` +
+      `- Fizetési mód: ${type_of_paid}\n` +
+      `- Szállítási mód: ${type_of_delivery}\n\n` +
+      `Üdvözlettel,\nSilverland csapata`
     };
 
     const sendToAdmin = {
@@ -531,7 +543,19 @@ app.put('/api/userorder/:id', async (req, res) => {
       from: 'silverland2024@gmail.com',
       to: email,
       subject: 'Sikeres frissítés!',
-      text: `Kedves ${name},\n\nSikeres kosár frissítés!\n\nÜdvözlettel,\nSilverland csapata`
+      text: `Kedves ${name},\n\nRendelésedet sikeresen frissítettük! A rendelési számod: ${order_number}.\n\nItt találhatóak a rendelési adatok:\n\n` +
+      `- Név: ${name}\n` +
+      `- Ár: ${price}\n` +
+      `- Telefon szám: ${phone_number}\n` +
+      `- Követési név: ${tracking_name}\n` +
+      `- Ország: ${country}\n` +
+      `- Irányítószám: ${zip_code}\n` +
+      `- Város: ${city}\n` +
+      `- Cím: ${address}\n` +
+      `- Rendelési adatok: ${ordered_data}\n` +
+      `- Fizetési mód: ${type_of_paid}\n` +
+      `- Szállítási mód: ${type_of_delivery}\n\n` +
+      `Üdvözlettel,\nSilverland csapata`
     };
 
     sendMail(orderEditEmail)

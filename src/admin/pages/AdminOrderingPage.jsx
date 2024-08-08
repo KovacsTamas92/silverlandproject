@@ -92,7 +92,11 @@ const AdminOrderingPage = () => {
         throw new Error("Hiba történt az adat mentése során!");
       }
       setIsDataRefreshed((prev) => !prev);
-      handleDoneOrder(id)
+      
+      if(!isActive){
+        handleDoneOrder(id)
+      }
+      
     } catch (error) {
       console.error("Hiba történt az adat mentése során:", error);
       setPopupMessage(`${error}`)

@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 
 const port = process.env.PORT
 const url = process.env.MONGOOSE_URI
@@ -17,6 +18,29 @@ const OrderingModel = require('./models/oredering');
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '500mb' }));
+
+// Nodemailer transporter beállítása
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+    user: 'silverland2024@gmail.com',
+    pass: 'uldh lbmn tlwo qkpv'
+  }
+});
+
+//Nodemailer sendMail function
+function sendMail (mailToWho){
+  transporter.sendMail(mailToWho, (error, info) => {
+    if (error) {
+      console.log('Hiba az e-mail küldésekor:', error);
+    } else {
+      console.log('E-mail sikeresen elküldve:', info.response);
+    }
+  });
+}
 
 // MongoDB kapcsolat
 mongoose.connect(url) 
@@ -145,6 +169,16 @@ app.post('/api/adminregistration', async (req, res) => {
     await adminData.save();
     console.log('Az adatok mentése sikeres volt!');
     res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
+
+    const adminregistrationEmail = {
+      from: 'silverland2024@gmail.com',
+      to: email,
+      subject: 'Sikeres regisztráció!',
+      text: `Kedves ${username},\n\nSikeres regisztráció!\n\nÜdvözlettel,\nSilverland csapata`
+    };
+
+    sendMail(adminregistrationEmail)
+
   } catch (err) {
     console.log('Hiba az adatok mentésekor:', err);
     res.status(500).send('Hiba az adatok mentésekor!');
@@ -234,6 +268,16 @@ app.put('/api/admin/:id', async (req, res) => {
     
     console.log('Admin sikeresen frissítve lett!');
     res.status(200).send(updatedData);
+
+    const adminEditEmail = {
+      from: 'silverland2024@gmail.com',
+      to: email,
+      subject: 'Sikeres Frissítés!',
+      text: `Kedves ${username},\n\nSikeresen frissítette az adatait!\n\nÜdvözlettel,\nSilverland csapata`
+    };
+
+    sendMail(adminEditEmail)
+
   } catch (err) {
     console.log('Hiba az Admin frissítésekor:', err);
     res.status(500).send('Hiba az Admin frissítésekor!');
@@ -269,6 +313,16 @@ app.post('/api/userregistration', async (req, res) => {
     await userData.save();
     console.log('Az adatok mentése sikeres volt!');
     res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
+
+    const userregistrationEmail = {
+      from: 'silverland2024@gmail.com',
+      to: email,
+      subject: 'Sikeres regisztráció!',
+      text: `Kedves ${username}},\n\nSikeres regisztráció!\n\nÜdvözlettel,\nSilverland csapata`
+    };
+
+    sendMail(userregistrationEmail)
+
   } catch (err) {
     console.log('Hiba az adatok mentésekor:', err);
     res.status(500).send('Hiba az adatok mentésekor!');
@@ -340,6 +394,16 @@ app.put('/api/user/:id', async (req, res) => {
 
     console.log('A felhasználó sikeresen frissítve lett!');
     res.status(200).send(updatedUser);
+
+    const userEditEmail = {
+      from: 'silverland2024@gmail.com',
+      to: email,
+      subject: 'Sikeres frissítés!',
+      text: `Kedves ${username},\n\nSikeres adat(ok) frissítése!\n\nÜdvözlettel,\nSilverland csapata`
+    };
+
+    sendMail(userEditEmail)
+
   } catch (err) {
     console.log('Hiba a felhasználó frissítésekor:', err);
     res.status(500).send('Hiba a felhasználó frissítésekor!');
@@ -396,6 +460,24 @@ app.post('/api/userorder', async (req, res) => {
     await orderingData.save();
     console.log('A rendelés mentése sikeres volt!');
     res.status(200).send('Rendelés sikeresen fogadva és mentve a szerveren.');
+   
+    const sendToOrder = {
+      from: 'silverland2024@gmail.com',
+      to: email,
+      subject: 'Rendelés visszaigazolása',
+      text: `Kedves ${name},\n\nKöszönjük a rendelésed! A rendelési számod: ${orderNumber}.\n\nÜdvözlettel,\nSilverland csapata`
+    };
+
+    const sendToAdmin = {
+      from: 'silverland2024@gmail.com',
+      to: 'silverland2024@gmail.com',
+      subject: 'Új rendelés érkezett!',
+      text: `Kedves Admin,\n\nÚj rendelés érkezett, a rendelés számod: ${orderNumber}.\n\nÜdvözlettel, Silverland`
+    };
+
+    sendMail(sendToOrder)
+    sendMail(sendToAdmin)
+
   } catch (err) {
     console.log('Hiba az rendelés mentésekor:', err);
     res.status(500).send('Hiba az rendelés mentésekor!');
@@ -444,6 +526,16 @@ app.put('/api/userorder/:id', async (req, res) => {
 
     console.log('A rendelés sikeresen frissítve lett!');
     res.status(200).send(updatedOrdering);
+
+    const orderEditEmail = {
+      from: 'silverland2024@gmail.com',
+      to: email,
+      subject: 'Sikeres frissítés!',
+      text: `Kedves ${username},\n\nSikeres kosár frissítés!\n\nÜdvözlettel,\nSilverland csapata`
+    };
+
+    sendMail(orderEditEmail)
+
   } catch (err) {
     console.log('Hiba a rendelés frissítésekor:', err);
     res.status(500).send('Hiba a rendelés frissítésekor!');

@@ -14,7 +14,6 @@ const DataModel = require('./models/product')
 const AdminModel = require('./models/adminUser')
 const UserModel = require('./models/user')
 const OrderingModel = require('./models/oredering');
-const { GiConsoleController } = require('react-icons/gi');
 
 // Middleware
 app.use(cors());
@@ -540,26 +539,29 @@ app.put('/api/userorder/:id', async (req, res) => {
     console.log('A rendelés sikeresen frissítve lett!');
     res.status(200).send(updatedOrdering);
 
-    const orderEditEmail = {
-      from: 'silverland2024@gmail.com',
-      to: email,
-      subject: 'Sikeres frissítés!',
-      text: `Kedves ${name},\n\nRendelésedet sikeresen frissítettük! A rendelési számod: ${order_number}.\n\nItt találhatóak a rendelési adatok:\n\n` +
-      `- Név: ${name}\n` +
-      `- Ár: ${price}\n` +
-      `- Telefon szám: ${phone_number}\n` +
-      `- Követési név: ${tracking_name}\n` +
-      `- Ország: ${country}\n` +
-      `- Irányítószám: ${zip_code}\n` +
-      `- Város: ${city}\n` +
-      `- Cím: ${address}\n` +
-      `- Rendelési adatok: ${ordered_data}\n` +
-      `- Fizetési mód: ${type_of_paid}\n` +
-      `- Szállítási mód: ${type_of_delivery}\n\n` +
-      `Üdvözlettel,\nSilverland csapata`
-    };
+    if(!is_active){
+      
+      const orderEditEmail = {
+        from: 'silverland2024@gmail.com',
+        to: email,
+        subject: 'Sikeres frissítés!',
+        text: `Kedves ${name},\n\nRendelésedet sikeresen frissítettük! A rendelési számod: ${order_number}.\n\nItt találhatóak a rendelési adatok:\n\n` +
+        `- Név: ${name}\n` +
+        `- Ár: ${price}\n` +
+        `- Telefon szám: ${phone_number}\n` +
+        `- Követési név: ${tracking_name}\n` +
+        `- Ország: ${country}\n` +
+        `- Irányítószám: ${zip_code}\n` +
+        `- Város: ${city}\n` +
+        `- Cím: ${address}\n` +
+        `- Rendelési adatok: ${ordered_data}\n` +
+        `- Fizetési mód: ${type_of_paid}\n` +
+        `- Szállítási mód: ${type_of_delivery}\n\n` +
+        `Üdvözlettel,\nSilverland csapata`
+      };
 
-    sendMail(orderEditEmail)
+      sendMail(orderEditEmail)
+    }
 
   } catch (err) {
     console.log('Hiba a rendelés frissítésekor:', err);
@@ -597,6 +599,7 @@ app.get('/api/userorder/:id', (req, res) => {
       });
 });
 
+//Rendelés kész
 app.get('/api/userorderdone/:id', async (req, res) => {
   const id = req.params.id;
   
@@ -604,7 +607,6 @@ app.get('/api/userorderdone/:id', async (req, res) => {
 
     const data = await OrderingModel.findById(id);
 
-    if (data.is_active === false) {
       const orderDoneEmail = {
         from: 'silverland2024@gmail.com',
         to: data.email,
@@ -626,8 +628,7 @@ app.get('/api/userorderdone/:id', async (req, res) => {
   
       sendMail(orderDoneEmail);
       
-      res.send(data);
-    }
+    res.send(data);
 
   } catch (err) {
     console.log('Hiba a rendelés lekérdezésekor:', err);

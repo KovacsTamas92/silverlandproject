@@ -542,11 +542,8 @@ app.put('/api/userorder/:id', async (req, res) => {
     console.log('A rendelés sikeresen frissítve lett!');
     res.status(200).send(updatedOrdering);
 
-    const shouldSendEmail = Object.keys(updatedOrderingData).some(key => 
-      updatedOrderingData[key] !== currentData[key] && key !== 'is_active'
-    );
+    if (currentData.is_active === true) {
 
-    if (shouldSendEmail) {
       const orderEditEmail = {
         from: 'silverland2024@gmail.com',
         to: email,
@@ -567,7 +564,8 @@ app.put('/api/userorder/:id', async (req, res) => {
       };
 
       sendMail(orderEditEmail);
-    }
+
+  }
 
   } catch (err) {
     console.log('Hiba a rendelés frissítésekor:', err);
@@ -615,7 +613,7 @@ app.get('/api/userorderdone/:id', async (req, res) => {
     if (data.is_active === true) {
       return res.send(data); 
     }
-    
+
     const orderDoneEmail = {
       from: 'silverland2024@gmail.com',
       to: data.email,

@@ -14,6 +14,7 @@ const DataModel = require('./models/product')
 const AdminModel = require('./models/adminUser')
 const UserModel = require('./models/user')
 const OrderingModel = require('./models/oredering');
+const { GiConsoleController } = require('react-icons/gi');
 
 // Middleware
 app.use(cors());
@@ -32,14 +33,14 @@ const transporter = nodemailer.createTransport({
 });
 
 //Nodemailer sendMail function
-function sendMail (mailToWho){
-  transporter.sendMail(mailToWho, (error, info) => {
+const sendMail = (mailToWho) => {
+ transporter.sendMail(mailToWho, (error, info) => {
     if (error) {
       console.log('Hiba az e-mail küldésekor:', error);
     } else {
       console.log('E-mail sikeresen elküldve:', info.response);
     }
-  });
+  }); 
 }
 
 // MongoDB kapcsolat
@@ -595,6 +596,43 @@ app.get('/api/userorder/:id', (req, res) => {
           res.status(500).send('Hiba a rendelés lekérdezésekor!');
       });
 });
+
+app.get('/api/userorderdone/:id', (req, res) => {
+  const id = req.params.id;
+  
+  OrderingModel.findById(id)
+      .then((data) => {
+          if (!data) {
+              return res.status(404).send('A keresett rendelés nem található!');
+          }
+          res.send(data);
+          const orderDoneEmail = {
+            from: 'silverland2024@gmail.com',
+            to: data.email,
+            subject: 'Rendelésed elkészült!',
+            text: `Kedves ${data.name},\n\nRendelésedet sikeresen elkészült! A rendelési számod: ${data.order_number}.\n\nItt találhatóak a rendelési adatok:\n\n` +
+            `- Név: ${data.name}\n` +
+            `- Ár: ${data.price}\n` +
+            `- Telefon szám: ${data.phone_number}\n` +
+            `- Követési név: ${data.tracking_name}\n` +
+            `- Ország: ${data.country}\n` +
+            `- Irányítószám: ${data.zip_code}\n` +
+            `- Város: ${data.city}\n` +
+            `- Cím: ${data.address}\n` +
+            `- Rendelési adatok: ${data.ordered_data}\n` +
+            `- Fizetési mód: ${data.type_of_paid}\n` +
+            `- Szállítási mód: ${data.type_of_delivery}\n\n` +
+            `Üdvözlettel,\nSilverland csapata`
+          };
+
+          sendMail(orderDoneEmail)
+      })
+      .catch((err) => {
+          console.log('Hiba a rendelés lekérdezésekor:', err);
+          res.status(500).send('Hiba a rendelés lekérdezésekor!');
+      });
+});
+
 
 app.listen(port, () => {
     console.log(`A szerver fut a ${port}-es porton!`);

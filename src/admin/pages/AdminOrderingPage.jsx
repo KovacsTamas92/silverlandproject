@@ -42,7 +42,7 @@ const AdminOrderingPage = () => {
     return matchesStatus;
   })
 
-  const confirmActiveChange = (id) => {
+  const confirmActiveChange = (id, email) => {
     let isActive = false;
 
     if (orderStatus === "completed") {
@@ -52,9 +52,24 @@ const AdminOrderingPage = () => {
     } else {
       setPopupMessage("Biztos lezárod a rendelést?");
       setPopupWindowCancelButtonPreview(true)
+      setPopupConfirmCallback(() => () => handleActive(id, isActive));
     }
-    setPopupConfirmCallback(() => () => handleActive(id, isActive));
   };
+
+  const handleDoneOrder = async (id, email) => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/userorderdone/${id}`);
+        if (!response.ok) {
+          throw new Error("Hiba történt az adatok lekérdezésekor!");
+        }
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setPopupMessage('')
+        setPopupMessage('')
+        setPopupConfirmCallback(()=>()=>(setPopupMessage(""), setPopupNavigate("")))
+      }
+  }
  
   const confirmDeleteChange = (id) => {
     setPopupMessage("Biztos, hogy törlöd a rendelést?")
@@ -62,7 +77,7 @@ const AdminOrderingPage = () => {
     setPopupConfirmCallback(() => () => handleDelete(id));
   }
 
-  const handleActive = async (id, isActive) => {
+  const handleActive = async (id, isActive, email) => {
     try {
       const response = await fetch(`http://localhost:3000/api/userorder/${id}`, {
         method: "PUT",
@@ -76,6 +91,7 @@ const AdminOrderingPage = () => {
         throw new Error("Hiba történt az adat mentése során!");
       }
       setIsDataRefreshed((prev) => !prev);
+      handleDoneOrder(id)
     } catch (error) {
       console.error("Hiba történt az adat mentése során:", error);
       setPopupMessage(`${error}`)
@@ -137,7 +153,7 @@ const AdminOrderingPage = () => {
           </button>
           {orderStatus === "active" ? (
             <div className="flex">
-              <button className="py-1 px-2" onClick={() => confirmActiveChange(params.id)}>
+              <button className="py-1 px-2" onClick={() => confirmActiveChange(params.id, params.email)}>
                 <FaCheck size={20} />
               </button>
               <button className="py-1 px-2" onClick={() => handleEdit(params.id)}>

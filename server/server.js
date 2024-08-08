@@ -314,14 +314,14 @@ app.post('/api/userregistration', async (req, res) => {
     console.log('Az adatok mentése sikeres volt!');
     res.status(200).send('Adatok sikeresen fogadva és mentve a szerveren.');
 
-    const userregistrationEmail = {
+    const userRegistrationEmail = {
       from: 'silverland2024@gmail.com',
       to: email,
       subject: 'Sikeres regisztráció!',
       text: `Kedves ${username}},\n\nSikeres regisztráció!\n\nÜdvözlettel,\nSilverland csapata`
     };
 
-    sendMail(userregistrationEmail)
+    sendMail(userRegistrationEmail)
 
   } catch (err) {
     console.log('Hiba az adatok mentésekor:', err);
@@ -531,7 +531,7 @@ app.put('/api/userorder/:id', async (req, res) => {
       from: 'silverland2024@gmail.com',
       to: email,
       subject: 'Sikeres frissítés!',
-      text: `Kedves ${username},\n\nSikeres kosár frissítés!\n\nÜdvözlettel,\nSilverland csapata`
+      text: `Kedves ${name},\n\nSikeres kosár frissítés!\n\nÜdvözlettel,\nSilverland csapata`
     };
 
     sendMail(orderEditEmail)

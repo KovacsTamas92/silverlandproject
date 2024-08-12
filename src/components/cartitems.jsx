@@ -1,81 +1,45 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useCart } from "../components/cartcontext";
 import NavBar from "../components/navbar";
 import SideBar from "../components/sidebar";
 import Logo from "../images/logo.gif";
 import Header from "../components/header";
-import { useCart } from "../components/cartcontext";
 
 function CartItems() {
-  const [cart, setCart] = useState([]);
-  const { removeItemFromCart } = useCart();
+  const { cart, setCart, removeItemFromCart } = useCart();
 
   useEffect(() => {
-    console.log("Session Storage tartalma:");
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      const value = sessionStorage.getItem(key);
-      console.log(`Key: ${key}, Value: ${value}`);
-    }
-
-    const savedCart = sessionStorage.getItem("cart");
-    console.log("Mentett kosár:", savedCart);
-
+    // Kosár állapotának frissítése
+    const savedCart = localStorage.getItem("cart");
     if (savedCart) {
       try {
         const parsedCart = JSON.parse(savedCart);
-        console.log("Parszolt kosár:", parsedCart);
-
         if (Array.isArray(parsedCart)) {
           setCart(parsedCart);
-        } else {
-          console.error("Az adat nem tömb:", parsedCart);
-          setCart([]);
         }
       } catch (error) {
-        console.error("Hiba történt a JSON.parse során:", error);
+        console.error("Hiba a kosár beállítása közben:", error);
         setCart([]);
       }
-    } else {
-      setCart([]);
     }
-  }, []);
+  }, [setCart]);
 
   const updateItemQuantity = (id, amount) => {
-    const updatedCart = cart
-      .map((product) => {
-        if (product._id === id) {
-          const newQuantity = product.quantity + amount;
-          if (newQuantity <= 0) return null; // Ha a mennyiség 0 vagy kevesebb, töröld a terméket
-          return { ...product, quantity: newQuantity };
-        }
-        return product;
-      })
-      .filter((item) => item !== null);
+    const updatedCart = cart.map((product) => {
+      if (product._id === id) {
+        const newQuantity = product.quantity + amount;
+        if (newQuantity <= 0) return null; // Ha a mennyiség 0 vagy kevesebb, töröld a terméket
+        return { ...product, quantity: newQuantity };
+      }
+      return product;
+    }).filter((item) => item !== null);
 
     setCart(updatedCart);
-    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   const deleteItem = (id) => {
     removeItemFromCart(id);
-    setCart(cart.filter((product) => product._id !== id));
   };
-
-  const getGroupedCartItems = () => {
-    const itemMap = new Map();
-
-    cart.forEach((item) => {
-      if (itemMap.has(item._id)) {
-        itemMap.get(item._id).quantity += item.quantity;
-      } else {
-        itemMap.set(item._id, { ...item });
-      }
-    });
-
-    return Array.from(itemMap.values());
-  };
-
-  const groupedCartItems = getGroupedCartItems();
 
   return (
     <div>
@@ -88,18 +52,16 @@ function CartItems() {
           <NavBar />
         </div>
       </div>
-
       <div>
         <SideBar />
       </div>
-
       <div className="ml-[255px] p-4">
         <h1 className="text-2xl font-bold text-center mb-4">Kosár tartalma</h1>
         <div className="w-[80%] mx-auto">
-          {groupedCartItems.length === 0 ? (
+          {cart.length === 0 ? (
             <div className="text-center mt-4">A kosár üres.</div>
           ) : (
-            groupedCartItems.map((product) => (
+            cart.map((product) => (
               <div
                 key={product._id}
                 className="flex items-center border border-gray-200 shadow-lg rounded-md p-4 mb-4"

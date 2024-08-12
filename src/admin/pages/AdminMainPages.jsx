@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminNavbar from '../components/adminNavbar';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import AdminMainSidebar from '../components/adminMainSidebar';
 import AdminPopupWindows from './AdminPopupWindows';
+import handleGeneratePDF from '../components/handleGeneratePdf';
 
 const AdminMainPage = () => {
     const [data, setData] = useState([]);
@@ -16,6 +17,8 @@ const AdminMainPage = () => {
     const [popupNavigate, setPopupNavigate] = useState("");
     const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
     const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
+
+    const datagridRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -154,7 +157,13 @@ const AdminMainPage = () => {
                 />
                 <div className="ml-80 pl-20 pt-20">
                     {error && <p className="text-red-500">{error}</p>}
-                    <div className='h-550 w-1100 fixed'>
+                    <button 
+                        onClick={()=>(handleGeneratePDF(filteredData))}
+                        className="mb-4 py-2 px-4 bg-blue-500 text-white rounded"
+                    >
+                        Mentés PDF-ként
+                    </button>
+                    <div className='h-550 w-1100 fixed' >
                         <DataGrid
                             rows={rows}
                             columns={columns}

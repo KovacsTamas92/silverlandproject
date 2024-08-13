@@ -1,23 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
-import AdminPopupWindows from "../pages/AdminPopupWindows";
 import AdminHeadSidebar from "./adminHeadSidebar";
 
 function AdminNavbar() {
-  const [popupMessage, setPopupMessage] = useState("");
-  const [popupNavigate, setPopupNavigate] = useState("");
-  const [popupConfirmCallback, setPopupConfirmCallback] = useState(
-    () => () => (setPopupMessage(""), setPopupNavigate(""))
-  );
-  const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] =
-    useState(false);
-  const [adminHeadSidebarPreview, setAdminHeadSidebarPreview] = useState(false);
 
-  const adminLogout = () => {
-    sessionStorage.removeItem("userId");
-    logout();
-  };
+  const [adminHeadSidebarPreview, setAdminHeadSidebarPreview] = useState(false);
 
   const handleAdminHeadSidebar = () => {
     setAdminHeadSidebarPreview(true);
@@ -29,10 +17,16 @@ function AdminNavbar() {
   return (
     <nav className="bg-gray-800 p-5 shadow-md fixed top-0 left-0 w-full z-50">
       <div className="flex justify-between items-center">
-        <Link to="/adminmain" className="text-white text-xl font-bold">
+        <Link to="/" className="text-white text-xl font-bold">
           Silverland
         </Link>
         <div className="flex space-x-4 ml-auto">
+          <Link 
+            to="/adminmain" 
+            className="text-gray-300 hover:text-white transition duration-300"
+          >
+            Termékek
+          </Link>
           <Link
             to="/adminordering"
             className="text-gray-300 hover:text-white transition duration-300"
@@ -53,21 +47,6 @@ function AdminNavbar() {
           </button>
         </div>
       </div>
-      {popupMessage && (
-        <AdminPopupWindows
-          message={popupMessage}
-          popupNavigate={popupNavigate}
-          onConfirm={popupConfirmCallback}
-          onCancel={() => {
-            setPopupMessage("");
-            setPopupNavigate("");
-            setPopupConfirmCallback(
-              () => () => (setPopupMessage(""), setPopupNavigate(""))
-            );
-          }}
-          popupWindowCancelButtonPreview={popupWindowCancelButtonPreview}
-        />
-      )}
       {adminHeadSidebarPreview && <AdminHeadSidebar />}
     </nav>
   );

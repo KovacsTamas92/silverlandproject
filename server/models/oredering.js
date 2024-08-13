@@ -37,10 +37,22 @@ const orderingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    ordered_data: {
-        type: String,
-        required: true
-    },
+    ordered_data: [
+        {
+            product_name: {
+                type: String,
+                required: true
+            },
+            quantity: {
+                type: Number,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true
+            }
+        }
+    ],
     order_number:{
         type: Number,
         required: true

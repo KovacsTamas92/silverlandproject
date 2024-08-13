@@ -467,14 +467,14 @@ app.post('/api/userorder', async (req, res) => {
       subject: 'Rendelés visszaigazolása',
       text: `Kedves ${name},\n\nKöszönjük a rendelésed! A rendelési számod: ${orderNumber}.\n\nItt találhatóak a rendelési adatok:\n\n` +
       `- Név: ${name}\n` +
-      `- Ár: ${price}\n` +
+      `- Ár: ${price}\n` + 
       `- Telefon szám: ${phone_number}\n` +
       `- Követési név: ${tracking_name}\n` +
       `- Ország: ${country}\n` +
       `- Irányítószám: ${zip_code}\n` +
       `- Város: ${city}\n` +
       `- Cím: ${address}\n` +
-      `- Rendelési adatok: ${ordered_data}\n` +
+      `- Rendelési adatok: ${ordered_data.map(item => `\n    - Termék neve: ${item.product_name}, Mennyiség: ${item.quantity}`).join('')}\n` +
       `- Fizetési mód: ${type_of_paid}\n` +
       `- Szállítási mód: ${type_of_delivery}\n\n` +
       `Üdvözlettel,\nSilverland csapata`
@@ -512,13 +512,12 @@ app.get('/api/userorder', (req, res) => {
 //Rendelés frissítés Id alapján
 app.put('/api/userorder/:id', async (req, res) => {
   const id = req.params.id;
-  const {  type_of_paid, type_of_delivery, user_id, is_active, ordered_data, name, price, email, phone_number, tracking_name, country, zip_code, city, address, order_number } = req.body;
+  const { type_of_paid, type_of_delivery, user_id, is_active, ordered_data, name, price, email, phone_number, tracking_name, country, zip_code, city, address, order_number } = req.body;
 
   try {
-
     const updatedOrderingData = {
       name,
-      price, 
+      price,
       email,
       phone_number,
       tracking_name,
@@ -530,7 +529,7 @@ app.put('/api/userorder/:id', async (req, res) => {
       order_number,
       is_active,
       user_id,
-      type_of_paid, 
+      type_of_paid,
       type_of_delivery
     };
     
@@ -539,8 +538,7 @@ app.put('/api/userorder/:id', async (req, res) => {
     console.log('A rendelés sikeresen frissítve lett!');
     res.status(200).send(updatedOrdering);
 
-    if(!is_active){
-      
+    if (!is_active) {
       const orderEditEmail = {
         from: 'silverland2024@gmail.com',
         to: email,
@@ -554,13 +552,12 @@ app.put('/api/userorder/:id', async (req, res) => {
         `- Irányítószám: ${zip_code}\n` +
         `- Város: ${city}\n` +
         `- Cím: ${address}\n` +
-        `- Rendelési adatok: ${ordered_data}\n` +
+        `- Rendelési adatok: ${ordered_data.map(item => `\n    - Termék neve: ${item.product_name}, Mennyiség: ${item.quantity}`).join('')}\n` +
         `- Fizetési mód: ${type_of_paid}\n` +
         `- Szállítási mód: ${type_of_delivery}\n\n` +
         `Üdvözlettel,\nSilverland csapata`
       };
-
-      sendMail(orderEditEmail)
+      sendMail(orderEditEmail);
     }
 
   } catch (err) {
@@ -568,6 +565,7 @@ app.put('/api/userorder/:id', async (req, res) => {
     res.status(500).send('Hiba a rendelés frissítésekor!');
   }
 });
+
 
 // Rendelési adatok törlése ID alapján
 app.delete('/api/userorder/:id', (req, res) => {
@@ -607,24 +605,24 @@ app.get('/api/userorderdone/:id', async (req, res) => {
 
     const data = await OrderingModel.findById(id);
 
-      const orderDoneEmail = {
-        from: 'silverland2024@gmail.com',
-        to: data.email,
-        subject: 'Rendelésed elkészült!',
-        text: `Kedves ${data.name},\n\nRendelésedet sikeresen elkészült! A rendelési számod: ${data.order_number}.\n\nItt találhatóak a rendelési adatok:\n\n` +
-        `- Név: ${data.name}\n` +
-        `- Ár: ${data.price}\n` +
-        `- Telefon szám: ${data.phone_number}\n` +
-        `- Követési név: ${data.tracking_name}\n` +
-        `- Ország: ${data.country}\n` +
-        `- Irányítószám: ${data.zip_code}\n` +
-        `- Város: ${data.city}\n` +
-        `- Cím: ${data.address}\n` +
-        `- Rendelési adatok: ${data.ordered_data}\n` +
-        `- Fizetési mód: ${data.type_of_paid}\n` +
-        `- Szállítási mód: ${data.type_of_delivery}\n\n` +
-        `Üdvözlettel,\nSilverland csapata`
-      };
+    const orderDoneEmail = {
+      from: 'silverland2024@gmail.com',
+      to: data.email,
+      subject: 'Rendelésed elkészült!',
+      text: `Kedves ${data.name},\n\nRendelésedet sikeresen elkészült! A rendelési számod: ${data.order_number}.\n\nItt találhatóak a rendelési adatok:\n\n` +
+      `- Név: ${data.name}\n` +
+      `- Ár: ${data.price}\n` +
+      `- Telefon szám: ${data.phone_number}\n` +
+      `- Követési név: ${data.tracking_name}\n` +
+      `- Ország: ${data.country}\n` +
+      `- Irányítószám: ${data.zip_code}\n` +
+      `- Város: ${data.city}\n` +
+      `- Cím: ${data.address}\n` +
+      `- Rendelési adatok: ${data.ordered_data.map(item => `\n    - Termék neve: ${item.product_name}, Mennyiség: ${item.quantity}`).join('')}\n` +
+      `- Fizetési mód: ${data.type_of_paid}\n` +
+      `- Szállítási mód: ${data.type_of_delivery}\n\n` +
+      `Üdvözlettel,\nSilverland csapata`
+    };
   
       sendMail(orderDoneEmail);
       

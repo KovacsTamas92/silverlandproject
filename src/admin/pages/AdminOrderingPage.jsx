@@ -143,9 +143,27 @@ const AdminOrderingPage = () => {
     { field: "zip_code", headerName: "Irányítószám", width: 60 },
     { field: "city", headerName: "Város", width: 100 },
     { field: "address", headerName: "Cím", width: 100 },
-    { field: "ordered_data", headerName: "Termékek", width: 100 },
     { field: "type_of_delivery", headerName: "Szállítási mód", width: 100 },
     { field: "type_of_paid", headerName: "Fizetési mód", width: 80 },
+    {
+      field: "ordered_data",
+      headerName: "Termékek",
+      width: 400,
+      renderCell: (params) => (
+        <div className="overflow-x-auto max-w-xs">
+          <table className="min-w-full border-collapse">
+            <tbody>
+              {params.value.map((item, index) => (
+                <tr key={index}>
+                  <td className="border p-2">{item.product_name}</td>
+                  <td className="border p-2">{item.quantity}db</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ),
+    },
     { field: "price", headerName: "Ár(Ft)", type: "number", width: 80 },  
     {
       field: "Action",

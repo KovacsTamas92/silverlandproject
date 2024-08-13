@@ -23,14 +23,10 @@ const replaceAccents = (str) => {
 };
 
 const handleGeneratePDF = (data) => {
-    if (!data || data.length === 0) {
-        console.error('No data available to generate PDF');
-        return;
-    }
 
     const doc = new jsPDF();
     const tableColumn = [
-        "Name", "Price", "Description", "Main Category", "Sub Category", "Number of Items", "Actual Number"
+        "Név", "Ár", "Leírás", "Fo kategória", "Al kategória", "Termék darabszám", "Valós darabszám"
     ];
 
     const tableRows = data.map(item => [
@@ -48,7 +44,7 @@ const handleGeneratePDF = (data) => {
         startY: 20
     });
 
-    doc.save('data-grid.pdf');
+    doc.save('leltar.pdf');
 };
 
 export default handleGeneratePDF;

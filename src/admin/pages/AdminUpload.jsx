@@ -5,7 +5,6 @@ import AdminPopupWindows from './AdminPopupWindows';
 
 const AdminUpload = () => {
     const mainCategories = [
-        "Összes termék",
         "Magyar nyelvű szerepjátékok",
         "Angol nyelvű szerepjátékok",
         "Magyar nyelvű könyvek",

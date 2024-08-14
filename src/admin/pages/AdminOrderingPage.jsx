@@ -42,7 +42,7 @@ const AdminOrderingPage = () => {
     return matchesStatus;
   })
 
-  const confirmActiveChange = (id, email) => {
+  const confirmActiveChange = (id) => {
     let isActive = false;
 
     if (orderStatus === "completed") {
@@ -91,15 +91,16 @@ const AdminOrderingPage = () => {
       if (!response.ok) {
         throw new Error("Hiba történt az adat mentése során!");
       }
+      
       setIsDataRefreshed((prev) => !prev);
       
       if(!isActive){
-        handleDoneOrder(id)
+        await handleDoneOrder(id)
       }
       
     } catch (error) {
       console.error("Hiba történt az adat mentése során:", error);
-      setPopupMessage(`${error}`)
+      setPopupMessage(`${error.message}`)
     } finally {
       setPopupMessage('')
       setPopupMessage('')

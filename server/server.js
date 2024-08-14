@@ -559,10 +559,9 @@ app.put('/api/userorder/:id', async (req, res) => {
       };
       sendMail(orderEditEmail);
     }
-
+    
   } catch (err) {
     console.log('Hiba a rendelés frissítésekor:', err);
-    res.status(500).send('Hiba a rendelés frissítésekor!');
   }
 });
 

@@ -36,6 +36,7 @@ const AdminMainPage = () => {
         };
 
         fetchData();
+        
     }, [isDataRefreshed]);
 
     const confirmDeleteChange = (id) => {

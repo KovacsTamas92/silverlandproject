@@ -95,7 +95,7 @@ const AdminOrderingPage = () => {
       setIsDataRefreshed((prev) => !prev);
       
       if(!isActive){
-        await handleDoneOrder(id)
+        handleDoneOrder(id)
       }
       
     } catch (error) {

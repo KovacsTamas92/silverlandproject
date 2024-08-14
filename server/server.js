@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer');
 
 const port = process.env.PORT
 const url = process.env.MONGOOSE_URI
+const nodemailerKey = process.env.NODEMAILER_SECRET_KEY
 
 //Model import
 const DataModel = require('./models/product')
@@ -27,7 +28,7 @@ const transporter = nodemailer.createTransport({
   secure: false,
   auth: {
     user: 'silverland2024@gmail.com',
-    pass: 'uldh lbmn tlwo qkpv'
+    pass: nodemailerKey
   }
 });
 
@@ -623,8 +624,7 @@ app.get('/api/userorderdone/:id', async (req, res) => {
       `Üdvözlettel,\nSilverland csapata`
     };
   
-      sendMail(orderDoneEmail);
-      
+    sendMail(orderDoneEmail); 
     res.send(data);
 
   } catch (err) {

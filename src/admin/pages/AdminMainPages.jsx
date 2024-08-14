@@ -167,7 +167,7 @@ const AdminMainPage = () => {
                         <FaFilePdf size={20} className="text-red-500" />
                     </button>
                     <button 
-                        onClick={() => exportToExcel(filteredData, formatDate)}
+                        onClick={() => exportToExcel(filteredData)}
                         className="mb-4 py-2 px-4 flex items-center gap-2"
                     >
                         <FaFileExcel size={20} className="text-green-500" />

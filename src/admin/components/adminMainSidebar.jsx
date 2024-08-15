@@ -1,18 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function AdminMainSidebar({ onCategorySelect, onSubCategorySelect }) {
-    const mainCategories = [
-        "Összes termék",
-        "Magyar nyelvű szerepjátékok",
-        "Angol nyelvű szerepjátékok",
-        "Magyar nyelvű könyvek",
-        "Angol nyelvű könyvek",
-        "Gyűjthető kártyajátékok",
-        "Társasjátékok",
-        "Figurák és figurás játékok",
-        "Magazinok",
-        "Egyebek"
-    ];
+
+    const [mainCategories, setMainCategories] =useState([])
+    const [error, setError] = useState()
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/api/maincategory');
+                if (!response.ok) {
+                    throw new Error('Hiba történt az adatok lekérdezésekor!');
+                }
+                const result = await response.json();
+                const categoriesObject = result[0].mainCategories;
+                const categoriesArray = Object.values(categoriesObject);
+                setMainCategories(categoriesArray);  
+            } catch (error) {
+                setError(error.message);
+            }
+        };
+
+        fetchData();
+        
+    }, []);
 
     const subCategories = {
         "Magyar nyelvű szerepjátékok": [

@@ -225,7 +225,7 @@ const AdminOrderingPage = () => {
           <div className='flex justify-end w-1100'>
               <button 
                   onClick={()=>(pageRefreshed())}
-                  className="mb-4 flex items-center gap-2"
+                  className="mb-4 py-2 px-4 flex items-center gap-2"
               >
                   <IoMdRefresh size={30} className="text-blue-500"/>
               </button>

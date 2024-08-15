@@ -16,6 +16,7 @@ const AdminModel = require('./models/adminUser')
 const UserModel = require('./models/user')
 const OrderingModel = require('./models/oredering');
 const MainCategoryModel = require('./models/mainCategory')
+const SubCategoryModel = require('./models/subCategory')
 
 // Middleware
 app.use(cors());
@@ -634,7 +635,7 @@ app.get('/api/userorderdone/:id', async (req, res) => {
   }
 });
 
-//Kategóriák feltöltése
+//Főkategóriák feltöltése
 app.post('/api/maincategory', (req, res) => {
   const { mainCategories } = req.body;
 
@@ -663,6 +664,39 @@ app.get('/api/maincategory', (req, res) => {
           res.status(500).send('Hiba a főkategóriák lekérdezésekor!');
       });
 });
+
+// Mellék kategóriák feltöltése
+app.post('/api/subcategories', (req, res) => {
+  const { mainCategories } = req.body;
+
+  const data = new SubCategoryModel({
+      mainCategories
+  });
+
+  data.save()
+      .then(() => {
+          console.log('A kategóriák mentése sikeres volt!');
+          res.status(200).send('Kategóriák sikeresen fogadva és mentve a szerveren.');
+      })
+      .catch((err) => {
+          console.log('Hiba a kategóriák mentésekor:', err);
+          res.status(500).send('Hiba a kategóriák mentésekor!');
+      });
+});
+
+//Mellék kategóriák lekérdezése
+app.get('/api/subcategories', (req, res) => {
+  SubCategoryModel.find({})
+      .then((data) => {
+          console.log('A mellékkategóriák lekérdezése sikeres volt!');
+          res.send(data);
+      })
+      .catch((err) => {
+          console.log('Hiba a mellékkategóriák lekérdezésekor:', err);
+          res.status(500).send('Hiba a mellékkategóriák lekérdezésekor!');
+      });
+});
+
 
 app.listen(port, () => {
     console.log(`A szerver fut a ${port}-es porton!`);

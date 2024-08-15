@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 function AdminMainSidebar({ onCategorySelect, onSubCategorySelect }) {
 
     const [mainCategories, setMainCategories] =useState([])
+    const [subCategories, setSubCategories] =useState([])
+    const [openCategory, setOpenCategory] = useState(null);
     const [error, setError] = useState()
 
     useEffect(() => {
@@ -13,6 +15,7 @@ function AdminMainSidebar({ onCategorySelect, onSubCategorySelect }) {
                     throw new Error('Hiba történt az adatok lekérdezésekor!');
                 }
                 const result = await response.json();
+
                 setMainCategories(result[0].mainCategories);  
             } catch (error) {
                 setError(error.message);
@@ -23,146 +26,24 @@ function AdminMainSidebar({ onCategorySelect, onSubCategorySelect }) {
         
     }, []);
 
-    const subCategories = {
-        "Magyar nyelvű szerepjátékok": [
-            "7tenger",
-            "D&D (2.kiadás)",
-            "Armageddon",
-            "Ars Magica",
-            "Auvron",
-            "Codex",
-            "D&D (3.kiadás)",
-            "Gallia",
-            "Gyűrűk Ura",
-            "Harc és Varázslat",
-            "Káosz",
-            "Középfölde (MERP)",
-            "MAGUS",
-            "Requiem",
-            "Shadowrun",
-            "Vampire",
-            "Egyéb magyar szerepjátékok",
-            "Kalandjáték-könyvek",
-        ],
-        "Angol nyelvű szerepjátékok": [
-            "AD&D 2nd edition",
-            "AD&D 3rd edition",
-            "AD&D 4th edition",
-            "Egyéb D20 / Other D20",
-            "Ars Magica",
-            "Battletech",
-            "Call of Cthulhu",
-            "Cyberpunk",
-            "Earthdown",
-            "GURPS",
-            "Middle Earth / Rolemaster",
-            "Rifts / Palladium Universe",
-            "Shadowrun",
-            "Star Trek",
-            "Star Wars (d6)",
-            "Warhammer RPGs",
-            "World of Darkness",
-            "Egyéb külföldi szerepjátékok / Other RPGs in English",
-            "Kalandjáték könyvek angolul / Fighting Fantasy",
-        ],
-        "Magyar nyelvű könyvek":[
-            "AD&D, D&D",
-            "Battletech reények",
-            "Cherubion",
-            "Cyberpunk regények",
-            "David Gemmel",
-            "Dark Fantasy, Horror",
-            "Dragonlance regények",
-            "Forgotten realms regények",
-            "J.R.R. Tolkien",
-            "Magic the Gathering regények",
-            "MAGUS regények",
-            "R.A. Salvatore egyéb világai",
-            "Ravenloft regények",
-            "Raymond E. Feist",
-            "Robert E. Howard / Conan",
-            "Robert Jordan",
-            "Sci-fi",
-            "Shadowrun regények",
-            "Terry Goodkind",
-            "Terry Pratchett",
-            "Warcraft",
-            "Warhammer regények",
-            "Weis & Hickman egyéb világai",
-            "World of Darkness regények",
-            "További regények",
-        ],
-        "Angol nyelvű könyvek":[
-            "Dragonlance",
-            "Forgotten Realms",
-            "Greyhawk",
-            "Magic te Gatering",
-            "Ravenloft",
-            "Other Dungeons and Dragons",
-            "Salvatore Other Worlds",
-            "Weis & Hickman Other Worlds",
-            "Battletech",
-            "Earthdawn",
-            "Shadowrun",
-            "Mage",
-            "Vampire",
-            "Werewolf",
-            "Other World of Darkness",
-            "Warhammer Universe",
-            "Dune Series",
-            "Star Trek Series",
-            "Star Wars Series",
-            "J.R.R. Tolkien",
-            "R.E. Feist",
-            "Robin Hood",
-            "Terry Goodkind",
-            "Terry Pratchet / Discworld",
-            "The Wheel of Time / Robert Jordan",
-            "William Gibson",
-            "Warcraft and other computer game related",
-            "Other Writers",
-        ],
-        "Gyűjthető kártyajátékok":[
-            "Magyar kártyajátékok", 
-            "Angol kártyajátékok"
-        ],
-        "Társasjátékok":[
-            "Magyar játékok",
-            "Angol táblás játékok / Boardgames",
-            "Egyéb angol játékok"
-        ],
-        "Figurák és figurás játékok":[
-            "DnD és más fantasy figurák",
-            "Gyűrűk Ura",
-            "Mage Knight",
-            "Shadowrun",
-            "Történelmi játékok",
-            "Warhammer Univerzum",
-            "World of Darkness",
-            "Egyéb figurás játékok",
-            "Egyéb figurák"
-        ],
-        "Magazinok":[
-            "Alanori Krónika",
-            "Bíborhold",
-            "Dragon",
-            "Fanfár",
-            "Rúna",
-            "Egyéb magyar magazinok",
-            "Angol magazinok"
-        ],
-        "Egyebek":[
-            "Dobókockák",
-            "Festékek, ecsetek, modellezés",
-            "Puzzle",
-            "Zene",
-            "Film",
-            "Művészeti mindenféle",
-            "Kiegészítők"
-        ]
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/api/subcategories');
+                if (!response.ok) {
+                    throw new Error('Hiba történt az adatok lekérdezésekor!');
+                }
+                const result = await response.json();
+                setSubCategories(result[0].mainCategories);
+            } catch (error) {
+                setError(error.message);
+            }
+        };
 
-    const [openCategory, setOpenCategory] = useState(null);
+        fetchData();
+        
+    }, []);
+
 
     const toggleCategory = (category) => {
         setOpenCategory(openCategory === category ? null : category);

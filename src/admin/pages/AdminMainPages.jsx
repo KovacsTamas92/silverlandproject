@@ -160,18 +160,18 @@ const AdminMainPage = () => {
                 <div className="ml-80 pl-20 pt-20">
                     {error && <p className="text-red-500">{error}</p>}
                     <div className='flex justify-end w-1100'>
-                    <button 
-                        onClick={()=>(handleGeneratePDF(filteredData))}
-                        className="mb-4 flex items-center gap-2"
-                    >
-                        <FaFilePdf size={20} className="text-red-500" />
-                    </button>
-                    <button 
-                        onClick={() => exportToExcel(filteredData)}
-                        className="mb-4 py-2 px-4 flex items-center gap-2"
-                    >
-                        <FaFileExcel size={20} className="text-green-500" />
-                    </button>
+                        <button 
+                            onClick={()=>(handleGeneratePDF(filteredData))}
+                            className="mb-4 flex items-center gap-2"
+                        >
+                            <FaFilePdf size={20} className="text-red-500" />
+                        </button>
+                        <button 
+                            onClick={() => exportToExcel(filteredData)}
+                            className="mb-4 py-2 px-4 flex items-center gap-2"
+                        >
+                            <FaFileExcel size={20} className="text-green-500" />
+                        </button>
                     </div>
                     <div className='h-550 w-1100 fixed' >
                         <DataGrid

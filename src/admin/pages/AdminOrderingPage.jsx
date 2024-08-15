@@ -5,6 +5,7 @@ import { FaTrashAlt, FaBackward, FaEdit, FaCheck } from "react-icons/fa";
 import AdminOrderSidebar from "../components/adminOrderSidebar";
 import { useNavigate } from "react-router-dom";
 import AdminPopupWindows from "./AdminPopupWindows";
+import { IoMdRefresh } from "react-icons/io";
 
 const AdminOrderingPage = () => {
   const [data, setData] = useState([]);
@@ -135,6 +136,10 @@ const AdminOrderingPage = () => {
     navigate("/adminorderingedit", { state: { id } });
   };
 
+  const pageRefreshed = () => {
+    setIsDataRefreshed((prev) => !prev);
+  }
+
   const columns = [
     { field: "order_number", headerName: "Azonosító", width: 100 },
     { field: "name", headerName: "Név", width: 100 },
@@ -217,6 +222,14 @@ const AdminOrderingPage = () => {
         <AdminOrderSidebar onStatusChange={handleStatusChange} />
         <div className="ml-80 pl-20 pt-20">
           {error && <p className="text-red-500">{error}</p>}
+          <div className='flex justify-end w-1100'>
+              <button 
+                  onClick={()=>(pageRefreshed())}
+                  className="mb-4 flex items-center gap-2"
+              >
+                  <IoMdRefresh size={30} className="text-blue-500"/>
+              </button>
+          </div>
           <div className="h-550 w-1100 fixed">
             <DataGrid
               rows={rows}

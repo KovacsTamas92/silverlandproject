@@ -19,7 +19,6 @@ const AdminMainPage = () => {
     const [popupConfirmCallback, setPopupConfirmCallback] = useState(()=>()=>(setPopupMessage(""), setPopupNavigate(""))); 
     const [popupWindowCancelButtonPreview, setPopupWindowCancelButtonPreview] = useState(false)
 
-    const datagridRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {

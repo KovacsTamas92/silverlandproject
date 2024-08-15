@@ -13,9 +13,7 @@ function AdminMainSidebar({ onCategorySelect, onSubCategorySelect }) {
                     throw new Error('Hiba történt az adatok lekérdezésekor!');
                 }
                 const result = await response.json();
-                const categoriesObject = result[0].mainCategories;
-                const categoriesArray = Object.values(categoriesObject);
-                setMainCategories(categoriesArray);  
+                setMainCategories(result[0].mainCategories);  
             } catch (error) {
                 setError(error.message);
             }

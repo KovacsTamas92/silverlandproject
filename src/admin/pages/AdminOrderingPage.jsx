@@ -6,6 +6,8 @@ import AdminOrderSidebar from "../components/adminOrderSidebar";
 import { useNavigate } from "react-router-dom";
 import AdminPopupWindows from "./AdminPopupWindows";
 import { IoMdRefresh } from "react-icons/io";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const AdminOrderingPage = () => {
   const [data, setData] = useState([]);
@@ -156,49 +158,59 @@ const AdminOrderingPage = () => {
       headerName: "Termékek",
       width: 400,
       renderCell: (params) => (
-        <div className="overflow-x-auto max-w-xs">
-          <table className="min-w-full border-collapse">
-            <tbody>
-              {params.value.map((item, index) => (
-                <tr key={index}>
-                  <td className="border p-2">{item.product_name}</td>
-                  <td className="border p-2">{item.quantity}db</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="flex flex-wrap overflow-x-auto max-w-xs">
+          {params.value.map((item, index) => (
+            <div key={index} className="flex flex-col border p-2">
+              <div className="font-bold">{item.product_name}</div>
+              <div>{item.quantity}db</div>
+            </div>
+          ))}
         </div>
       ),
     },
-    { field: "price", headerName: "Ár(Ft)", type: "number", width: 80 },  
+    { field: "price", headerName: "Ár(Ft)", type: "number", width: 80 },
     {
       field: "Action",
       headerName: "",
       width: 120,
       renderCell: (params) => (
         <div className="flex justify-center items-center gap-2 h-full">
-          <button className="py-1 px-2" onClick={() => confirmDeleteChange(params.id)}>
+          <button className="py-1 px-2 text-red-600 hover:text-red-800" onClick={() => confirmDeleteChange(params.id)}>
             <FaTrashAlt size={20} />
           </button>
           {orderStatus === "active" ? (
-            <div className="flex">
-              <button className="py-1 px-2" onClick={() => confirmActiveChange(params.id)}>
+            <div className="flex gap-2">
+              <button className="py-1 px-2 text-green-600 hover:text-green-800" onClick={() => confirmActiveChange(params.id)}>
                 <FaCheck size={20} />
               </button>
-              <button className="py-1 px-2" onClick={() => handleEdit(params.id)}>
+              <button className="py-1 px-2 text-blue-600 hover:text-blue-800" onClick={() => handleEdit(params.id)}>
                 <FaEdit size={20} />
               </button>
             </div>
           ) : (
-            <button className="py-1 px-2" onClick={() => confirmActiveChange(params.id)}>
+            <button className="py-1 px-2 text-yellow-600 hover:text-yellow-800" onClick={() => confirmActiveChange(params.id)}>
               <FaBackward size={20} />
             </button>
           )}
         </div>
       ),
     },
+    {
+      field: "print_invoice",
+      headerName: "Számla nyomtatás",
+      width: 150,
+      renderCell: (params) => (
+        <button
+          className="py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={() => handlePrintInvoice(params.id)}
+        >
+          Nyomtatás
+        </button>
+      ),
+    },
   ];
-
+  
+  
   const rows = filteredData.map((item) => ({
     id: item._id,
     name: item.name,
@@ -214,6 +226,73 @@ const AdminOrderingPage = () => {
     type_of_paid: item.type_of_paid,
     type_of_delivery: item.type_of_delivery
   }));
+
+  const handlePrintInvoice = (id) => {
+    const order = data.find(item => item._id === id);
+
+    if (!order) {
+        setError("Rendelés nem található!");
+        return;
+    }
+
+    // Létrehozzuk a PDF dokumentumot
+    const doc = new jsPDF();
+
+    // Cég információk
+    doc.setFontSize(22);
+    doc.text('Eladó neve és címe', 14, 22);
+    doc.setFontSize(10);
+    doc.text('Cég Cím: Bp Madách Imre utca 22', 14, 30);
+    doc.text('Telefonszám: 123-456-789', 14, 36);
+    doc.text('Email: info@ceg.hu', 14, 42);
+
+    // Vevő információk
+    doc.setFontSize(22);
+    doc.text('Vevő neve és címe', 100, 22);
+    doc.setFontSize(10);
+    doc.text('Név: ' + order.name, 100, 30); // Jobb felső sarok
+    doc.text('Cím: ' + order.address, 100, 36);
+    doc.text('Telefonszám: ' + order.phone_number, 100, 42);
+    doc.text('Email: ' + order.email, 100, 48);
+
+    // Rendelés információk
+    doc.setFontSize(16);
+    doc.text('Rendelési Száma: ' + order.order_number, 14, 80);
+    doc.text('Dátum: ' + new Date().toLocaleDateString(), 14, 86);
+
+    // Rendelési termékek táblázata
+    autoTable(doc, {
+        startY: 100,
+        head: [['Termék Neve', 'Mennyiség', 'Ár']],
+        body: order.ordered_data.map(item => [item.product_name, item.quantity, item.price]),
+    });
+
+    // Összesen
+    const totalY = doc.lastAutoTable.finalY + 10; // Az utolsó táblázat utáni pozíció
+    doc.text(`Összesen: ${order.price} Ft`, 14, totalY);
+
+    // Aláírások helye
+    const pageHeight = doc.internal.pageSize.height;
+    const signatureY = pageHeight - 40; // Az aláírások pozíciója 40 egységgel az aljától
+
+    // Aláírások vonal
+    doc.line(14, signatureY, 80, signatureY); // Első vonal
+    doc.line(100, signatureY, 186, signatureY); // Második vonal
+
+    // Aláírás szövegek
+    doc.setFontSize(12);
+    doc.text('Aláírás: ', 14, signatureY + 6); // Első aláírás szöveg
+    doc.text('Aláírás: ', 100, signatureY + 6); // Második aláírás szöveg
+
+    // Lábléc
+    doc.setFontSize(10);
+    doc.text('Köszönjük, hogy minket választott!', 14, pageHeight - 20);
+
+    // PDF letöltése
+    doc.save('szamla.pdf');
+};
+
+
 
   return (
     <div>

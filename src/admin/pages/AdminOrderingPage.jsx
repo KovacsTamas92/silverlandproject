@@ -1,13 +1,12 @@
 import AdminNavbar from "../components/adminNavbar";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import { FaTrashAlt, FaBackward, FaEdit, FaCheck } from "react-icons/fa";
+import { FaTrashAlt, FaBackward, FaEdit, FaCheck, FaFileDownload} from "react-icons/fa";
 import AdminOrderSidebar from "../components/adminOrderSidebar";
 import { useNavigate } from "react-router-dom";
 import AdminPopupWindows from "./AdminPopupWindows";
 import { IoMdRefresh } from "react-icons/io";
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import handleDownloadInvoice from "../components/handleDownloadInvoice";
 
 const AdminOrderingPage = () => {
   const [data, setData] = useState([]);
@@ -158,14 +157,18 @@ const AdminOrderingPage = () => {
       headerName: "Termékek",
       width: 400,
       renderCell: (params) => (
-        <div className="flex flex-wrap overflow-x-auto max-w-xs">
-          {params.value.map((item, index) => (
-            <div key={index} className="flex flex-col border p-2">
-              <div className="font-bold">{item.product_name}</div>
-              <div>{item.quantity}db</div>
-            </div>
-          ))}
-        </div>
+        <div className="overflow-x-auto max-w-xs">
+        <table className="min-w-full border-collapse">
+          <tbody>
+            {params.value.map((item, index) => (
+              <tr key={index}>
+                <td className="border p-2">{item.product_name}</td>
+                <td className="border p-2">{item.quantity}db</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       ),
     },
     { field: "price", headerName: "Ár(Ft)", type: "number", width: 80 },
@@ -175,20 +178,20 @@ const AdminOrderingPage = () => {
       width: 120,
       renderCell: (params) => (
         <div className="flex justify-center items-center gap-2 h-full">
-          <button className="py-1 px-2 text-red-600 hover:text-red-800" onClick={() => confirmDeleteChange(params.id)}>
+          <button className="py-1 px-2" onClick={() => confirmDeleteChange(params.id)}>
             <FaTrashAlt size={20} />
           </button>
           {orderStatus === "active" ? (
-            <div className="flex gap-2">
-              <button className="py-1 px-2 text-green-600 hover:text-green-800" onClick={() => confirmActiveChange(params.id)}>
+            <div className="flex">
+              <button className="py-1 px-2" onClick={() => confirmActiveChange(params.id)}>
                 <FaCheck size={20} />
               </button>
-              <button className="py-1 px-2 text-blue-600 hover:text-blue-800" onClick={() => handleEdit(params.id)}>
+              <button className="py-1 px-2" onClick={() => handleEdit(params.id)}>
                 <FaEdit size={20} />
               </button>
             </div>
           ) : (
-            <button className="py-1 px-2 text-yellow-600 hover:text-yellow-800" onClick={() => confirmActiveChange(params.id)}>
+            <button className="py-1 px-2" onClick={() => confirmActiveChange(params.id)}>
               <FaBackward size={20} />
             </button>
           )}
@@ -196,16 +199,15 @@ const AdminOrderingPage = () => {
       ),
     },
     {
-      field: "print_invoice",
-      headerName: "Számla nyomtatás",
+      field: "Download_Invoice",
+      headerName: "Számla letöltése",
       width: 150,
       renderCell: (params) => (
-        <button
-          className="py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={() => handlePrintInvoice(params.id)}
-        >
-          Nyomtatás
-        </button>
+          <div className="flex justify-center items-center gap-2 h-full">
+            <button onClick={() => handleDownloadInvoice(params.id, data)}>
+              <FaFileDownload size={20} />
+            </button>
+          </div>
       ),
     },
   ];
@@ -227,7 +229,7 @@ const AdminOrderingPage = () => {
     type_of_delivery: item.type_of_delivery
   }));
 
-  const handlePrintInvoice = (id) => {
+/*   const handlePrintInvoice = (id) => {
     const order = data.find(item => item._id === id);
 
     if (!order) {
@@ -245,10 +247,11 @@ const AdminOrderingPage = () => {
     doc.text('Cég Cím: Bp Madách Imre utca 22', 14, 30);
     doc.text('Telefonszám: 123-456-789', 14, 36);
     doc.text('Email: info@ceg.hu', 14, 42);
+    doc.text('Adószám: 01230123123-123123', 14, 48);
 
     // Vevő információk
     doc.setFontSize(22);
-    doc.text('Vevő neve és címe', 100, 22);
+    doc.text('Vevo neve és címe', 100, 22);
     doc.setFontSize(10);
     doc.text('Név: ' + order.name, 100, 30); // Jobb felső sarok
     doc.text('Cím: ' + order.address, 100, 36);
@@ -290,7 +293,7 @@ const AdminOrderingPage = () => {
 
     // PDF letöltése
     doc.save('szamla.pdf');
-};
+}; */
 
 
 
